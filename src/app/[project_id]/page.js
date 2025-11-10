@@ -6,7 +6,7 @@ const getProject = async (id) => {
   const { data, error } = await supabase
     .from('project')
     .select(
-      'id, name, description, bom, web_link, project_files(*), project_videos(id, video_embed_link)'
+      'id, name, description, bom, web_link, project_files(*), project_videos(id, video_embed_link)',
     )
     .eq('id', id)
 

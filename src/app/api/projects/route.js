@@ -10,8 +10,7 @@ export async function GET() {
   return Response.json(projects)
 }
 
-export async function POST(req) {
-  console.log(req)
+export async function POST() {
   const { project_id } = params
   const { data: project, error } = await supabase
     .from('project')

@@ -1,6 +1,11 @@
 'use client'
-import Link from 'next/link'
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useMemo, useState, useCallback } from 'react'
+import dynamic from 'next/dynamic'
+import { supabase } from '@/lib/db'
+
+const ThreeViewer = dynamic(() => import('@/components/ThreeViewer'), {
+  ssr: false,
+})
 
 const getProjects = async () => {
   const resp = await fetch(`/api/projects`)
@@ -8,16 +13,11 @@ const getProjects = async () => {
   return projects
 }
 
-const statusColor = {
-  'in progress': '#facc15', // yellow-400
-  completed: '#22c55e', // green-500
-}
-
-const statusOptions = ['all', 'canceled', 'in progress', 'completed']
-
 export default function ProjectList() {
   const [projectList, setProjectList] = useState([])
   const [filterStatus, setFilterStatus] = useState('all')
+  const [selected, setSelected] = useState(null)
+  const [modelUrl, setModelUrl] = useState(null)
 
   useEffect(() => {
     getProjects().then(setProjectList)
@@ -31,82 +31,70 @@ export default function ProjectList() {
     [projectList, filterStatus],
   )
 
-  const columns = [
-    {
-      field: 'name',
-      headerName: 'Name',
-      flex: 1,
-      renderCell: (params) => (
-        <Link
-          href={`/${params.row.id}`}
-          className="text-blue-400 hover:underline"
-        >
-          {params.value}
-        </Link>
-      ),
-    },
-    {
-      field: 'description',
-      headerName: 'Description',
-      flex: 2,
-    },
-    {
-      field: 'status',
-      headerName: 'Status',
-      flex: 1,
-      renderCell: (params) => (
-        <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span
-            style={{
-              display: 'inline-block',
-              width: 12,
-              height: 12,
-              borderRadius: '50%',
-              backgroundColor: statusColor[params.value] || '#a3a3a3',
-            }}
-            aria-label={params.value}
-          ></span>
-          {params.value}
-        </span>
-      ),
-    },
-  ]
+  const handleSelect = useCallback(async (project) => {
+    setSelected(project)
+    setModelUrl(null)
+    const resp = await fetch('/api/projects/files', {
+      method: 'POST',
+      body: project.id,
+    })
+    const url = await resp.text()
+    setModelUrl(url)
+  }, [])
 
   return (
-    <main className="flex min-h-screen w-full flex-col items-stretch p-6 gap-10 bg-background">
-      <div className="mb-4 flex gap-4 items-center">
+    <main className="min-h-screen w-full p-6 bg-background">
+      <div className="mb-4 flex items-center justify-between">
         <p className="text-accent">projects</p>
       </div>
-      <div className="flex flex-col gap-8">
-        {rows.map((project) => (
-          <div
-            key={project.id}
-            className="rounded-lg bg-background p-4 flex flex-col nm-protrude nm-flat nm-light-source-t"
-          >
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-lg font-semibold text-accent">
-                <Link href={`/${project.id}`}>{project.name}</Link>
-              </span>
-              <div className="text-sm  flex items-center gap-2">
-                <span>{project.status}</span>{' '}
-                <span
-                  className={
-                    `inline-block w-3 h-3 rounded-full ` +
-                    (project.status === 'in progress'
-                      ? 'bg-yellow'
-                      : project.status === 'completed'
-                        ? 'bg-green'
-                        : project.status === 'canceled'
-                          ? 'bg-danger'
-                          : 'bg-borderlight')
-                  }
-                  aria-label={project.status}
-                ></span>
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
+        {/* Left pane: project list */}
+        <div className="lg:col-span-2 flex flex-col gap-4">
+          {rows.map((project) => (
+            <button
+              key={project.id}
+              onClick={() => handleSelect(project)}
+              className={
+                'text-left rounded-lg p-4 border transition ' +
+                (selected?.id === project.id
+                  ? 'border-secondary bg-background/80'
+                  : 'border-secondary/30 hover:border-secondary/60')
+              }
+            >
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-lg font-semibold text-accent">
+                  {project.name}
+                </span>
+                <span className="text-xs opacity-80">{project.status}</span>
               </div>
+              <div className="text-sm opacity-90">{project.description}</div>
+            </button>
+          ))}
+        </div>
+
+        {/* Right pane: 3D viewer, shows only when a project is selected */}
+        <div className="lg:col-span-3">
+          {selected ? (
+            modelUrl ? (
+              <ThreeViewer
+                modelUrl={modelUrl}
+                autoPlay={true}
+                resumeDelayMs={5000}
+                minDistance={0.8}
+                maxDistance={8}
+              />
+            ) : (
+              <div className="flex h-[50vh] lg:h-[70vh] items-center justify-center rounded border border-secondary/30 text-sm opacity-80">
+                No 3D model found for this project.
+              </div>
+            )
+          ) : (
+            <div className="flex h-[30vh] items-center justify-center rounded border border-secondary/30 text-sm opacity-80">
+              Select a project to preview its 3D animation.
             </div>
-            <div className="mb-1">{project.description}</div>
-          </div>
-        ))}
+          )}
+        </div>
       </div>
     </main>
   )
