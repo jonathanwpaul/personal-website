@@ -1,7 +1,6 @@
 'use client'
 import { useEffect, useMemo, useState, useCallback } from 'react'
 import dynamic from 'next/dynamic'
-import { supabase } from '@/lib/db'
 
 const ThreeViewer = dynamic(() => import('@/components/ThreeViewer'), {
   ssr: false,

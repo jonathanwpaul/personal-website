@@ -1,25 +1,12 @@
-import { supabase } from '@/lib/db'
 import { ImageCarousel, EmbedCarousel } from './carousel'
 import Title from './title'
-
-const getProject = async (id) => {
-  const { data, error } = await supabase
-    .from('project')
-    .select(
-      'id, name, description, bom, web_link, project_files(*), project_videos(id, video_embed_link)',
-    )
-    .eq('id', id)
-
-  if (error) throw new Error(error.message)
-  return data[0] || {}
-}
 
 export default async function Details({ params }) {
   const paramResult = await params
   console.log('paramResult', paramResult)
   if (!paramResult.project_id) return <p>Nothing to see here :(</p>
 
-  const project = await getProject(paramResult.project_id)
+  const project = {}
 
   console.log(project)
   const { name, description, bom, web_link, project_files, project_videos } =
