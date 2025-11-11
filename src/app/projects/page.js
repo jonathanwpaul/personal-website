@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useMemo, useState, useCallback } from 'react'
 import dynamic from 'next/dynamic'
+import { ProjectButton } from '@/components/ProjectButton'
 
 const ThreeViewer = dynamic(() => import('@/components/ThreeViewer'), {
   ssr: false,
@@ -42,59 +43,38 @@ export default function ProjectList() {
   }, [])
 
   return (
-    <main className="min-h-screen w-full p-6 bg-background">
-      <div className="mb-4 flex items-center justify-between">
-        <p className="text-accent">projects</p>
+    <div className="flex p-5 gap-5 h-[95%]">
+      <div className="lg:col-span-2 overflow-y-auto pr-3 flex flex-col gap-4">
+        {rows.map((project) => (
+          <ProjectButton
+            project={project}
+            handleSelect={handleSelect}
+            selected={selected}
+          />
+        ))}
       </div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
-        {/* Left pane: project list */}
-        <div className="lg:col-span-2 flex flex-col gap-4">
-          {rows.map((project) => (
-            <button
-              key={project.id}
-              onClick={() => handleSelect(project)}
-              className={
-                'text-left rounded-lg p-4 border transition ' +
-                (selected?.id === project.id
-                  ? 'border-secondary bg-background/80'
-                  : 'border-secondary/30 hover:border-secondary/60')
-              }
-            >
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-lg font-semibold text-accent">
-                  {project.name}
-                </span>
-                <span className="text-xs opacity-80">{project.status}</span>
-              </div>
-              <div className="text-sm opacity-90">{project.description}</div>
-            </button>
-          ))}
+      {/* Right pane: 3D viewer, fills remaining height, no page scroll */}
+      {selected ? (
+        modelUrl ? (
+          <ThreeViewer
+            modelUrl={modelUrl}
+            autoPlay={true}
+            resumeDelayMs={5000}
+            minDistance={0.1}
+            maxDistance={1}
+            className="h-full"
+          />
+        ) : (
+          <div className="flex h-full items-center justify-center rounded-lg p-4 border border-secondary/30 bg-background/80 text-sm opacity-80">
+            No 3D model found for this project.
+          </div>
+        )
+      ) : (
+        <div className="flex h-full items-center justify-center rounded-lg p-4 border border-secondary/30 bg-background/80 text-sm opacity-80">
+          Select a project to preview its 3D animation.
         </div>
-
-        {/* Right pane: 3D viewer, shows only when a project is selected */}
-        <div className="lg:col-span-3">
-          {selected ? (
-            modelUrl ? (
-              <ThreeViewer
-                modelUrl={modelUrl}
-                autoPlay={true}
-                resumeDelayMs={5000}
-                minDistance={0.8}
-                maxDistance={8}
-              />
-            ) : (
-              <div className="flex h-[50vh] lg:h-[70vh] items-center justify-center rounded border border-secondary/30 text-sm opacity-80">
-                No 3D model found for this project.
-              </div>
-            )
-          ) : (
-            <div className="flex h-[30vh] items-center justify-center rounded border border-secondary/30 text-sm opacity-80">
-              Select a project to preview its 3D animation.
-            </div>
-          )}
-        </div>
-      </div>
-    </main>
+      )}
+    </div>
   )
 }

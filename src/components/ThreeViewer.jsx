@@ -1,7 +1,20 @@
 'use client'
-import React, { Suspense, useEffect, useMemo, useRef, useState, useCallback } from 'react'
+import React, {
+  Suspense,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useCallback,
+} from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { OrbitControls, useAnimations, useGLTF, Bounds, Center } from '@react-three/drei'
+import {
+  OrbitControls,
+  useAnimations,
+  useGLTF,
+  Bounds,
+  Center,
+} from '@react-three/drei'
 import * as THREE from 'three'
 
 /**
@@ -49,12 +62,18 @@ export default function ThreeViewer({
     }, resumeDelayMs)
   }, [resumeDelayMs, hasAnims])
 
-  useEffect(() => () => resumeTimer.current && clearTimeout(resumeTimer.current), [])
+  useEffect(
+    () => () => resumeTimer.current && clearTimeout(resumeTimer.current),
+    [],
+  )
 
   return (
-    <div className={`relative w-full h-[50vh] lg:h-[70vh] ${className}`} style={style}>
-      <Canvas camera={{ fov }} shadows gl={{ antialias: true }}>
-        <color attach="background" args={[background]} />
+    <div
+      className={`relative w-full h-full min-h-[40vh] rounded-lg p-4 border border-primary/30 bg-background/80 ${className}`}
+      style={style}
+    >
+      <Canvas camera={{ fov }} shadows gl={{ antialias: true, alpha: true }}>
+        {/* transparent canvas: leave scene.background = null */}
         <ambientLight intensity={0.6} />
         <directionalLight position={[5, 5, 5]} intensity={0.9} castShadow />
         <Suspense fallback={null}>
@@ -78,7 +97,7 @@ export default function ThreeViewer({
       </Canvas>
 
       {hasAnims && (
-        <div className="absolute bottom-3 left-4 right-4 flex items-center gap-3 bg-background/70 backdrop-blur rounded-md px-3 py-2 border border-secondary/30">
+        <div className="absolute bottom-3 left-4 right-4 flex items-center gap-3 bg-background/70 backdrop-blur rounded-md px-3 py-2 ">
           <button
             type="button"
             onClick={() => setPlaying((p) => !p)}
@@ -149,7 +168,10 @@ function Scene({
       setDuration(durationRef.current)
       setHasAnims(true)
       // Create or reuse action
-      const action = (actions[clip.name] ||= mixer.clipAction(clip, group.current))
+      const action = (actions[clip.name] ||= mixer.clipAction(
+        clip,
+        group.current,
+      ))
       action.loop = THREE.LoopRepeat
       action.clampWhenFinished = false
       action.play()
@@ -183,7 +205,6 @@ function Scene({
     }
   })
 
-
   // Compute bounds and center
   const bounds = useMemo(() => {
     const box = new THREE.Box3().setFromObject(scene)
@@ -193,7 +214,6 @@ function Scene({
     box.getCenter(center)
     return { box, size, center }
   }, [scene])
-
 
   // Controls events to mark user drag (optional use)
   const onStart = () => onUserInteract && onUserInteract()
@@ -205,14 +225,16 @@ function Scene({
           <primitive object={scene} />
         </Center>
       </group>
-      <Bounds fit clip observe margin={1}>
+      <Bounds fit clip observe margin={0.1}>
         {/* bounds wrapper ensures model fits in view */}
       </Bounds>
       <OrbitControls
         makeDefault
         enableDamping
         dampingFactor={0.08}
-        target={orbitTarget || [bounds.center.x, bounds.center.y, bounds.center.z]}
+        target={
+          orbitTarget || [bounds.center.x, bounds.center.y, bounds.center.z]
+        }
         minDistance={minDistance}
         maxDistance={maxDistance}
         {...(minPolarAngle !== undefined ? { minPolarAngle } : {})}
