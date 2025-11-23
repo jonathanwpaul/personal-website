@@ -20,7 +20,7 @@ export default function TopBar() {
   const path = formatPath(pathname)
 
   return (
-    <header className="sticky top-0 h-[5%] z-40 w-full border-b border-primary/30 bg-background/80 backdrop-blur">
+    <header className="absolute top-0 z-20 w-full border-b border-primary/30 bg-background/20 backdrop-blur">
       <div className="mx-auto flex items-center h-full justify-between px-4">
         <div className="font-mono text-sm text-text/90">{path}</div>
         <ThemeToggle className="ml-4" />

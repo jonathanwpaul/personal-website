@@ -14,6 +14,8 @@ import {
   useGLTF,
   Bounds,
   Center,
+  AsciiRenderer,
+  Outlines,
 } from '@react-three/drei'
 import * as THREE from 'three'
 
@@ -49,43 +51,27 @@ export default function ThreeViewer({
   className = '',
 }) {
   const [playing, setPlaying] = useState(autoPlay)
-  const [duration, setDuration] = useState(0)
-  const [progress, setProgress] = useState(0) // 0..1
-  const [hasAnims, setHasAnims] = useState(false)
-  const resumeTimer = useRef(null)
+  const currentTime = useRef()
 
-  const onUserInteract = useCallback(() => {
-    if (hasAnims) setPlaying(false)
-    if (resumeTimer.current) clearTimeout(resumeTimer.current)
-    resumeTimer.current = setTimeout(() => {
-      setPlaying(true)
-    }, resumeDelayMs)
-  }, [resumeDelayMs, hasAnims])
-
-  useEffect(
-    () => () => resumeTimer.current && clearTimeout(resumeTimer.current),
-    [],
-  )
+  //TODO: convert to state
+  const hasAnims = true
 
   return (
     <div
-      className={`relative w-full h-full min-h-[40vh] rounded-lg p-4 border border-primary/30 bg-background/80 ${className}`}
+      className={`relative w-full h-full min-h-[40vh] rounded-lg p-4 ${className}`}
       style={style}
     >
       <Canvas camera={{ fov }} shadows gl={{ antialias: true, alpha: true }}>
         {/* transparent canvas: leave scene.background = null */}
-        <ambientLight intensity={0.6} />
-        <directionalLight position={[5, 5, 5]} intensity={0.9} castShadow />
+        <ambientLight intensity={0.8} />
+        <directionalLight position={[3, 5, 5]} intensity={2.9} castShadow />
+        <directionalLight position={[-3, 5, 5]} intensity={0.9} castShadow />
         <Suspense fallback={null}>
           {modelUrl ? (
-            <Scene
+            <Model
               modelUrl={modelUrl}
               playing={playing}
-              progress={progress}
               setPlaying={setPlaying}
-              setDuration={setDuration}
-              setHasAnims={setHasAnims}
-              onUserInteract={onUserInteract}
               orbitTarget={orbitTarget}
               minDistance={minDistance}
               maxDistance={maxDistance}
@@ -101,7 +87,7 @@ export default function ThreeViewer({
           <button
             type="button"
             onClick={() => setPlaying((p) => !p)}
-            className="px-2 py-1 text-sm rounded border border-secondary/40 hover:border-secondary/60"
+            className="px-2 py-1 text-sm rounded border border-primary/40 hover:border-primary/60"
           >
             {playing ? 'Pause' : 'Play'}
           </button>
@@ -111,99 +97,49 @@ export default function ThreeViewer({
             min={0}
             max={1}
             step={0.001}
-            value={progress}
-            onChange={(e) => setProgress(Number(e.target.value))}
-            onInput={onUserInteract}
-            onMouseDown={onUserInteract}
-            onTouchStart={onUserInteract}
-            className="w-full accent-secondary"
+            value={currentTime}
+            className="w-full accent-primary"
           />
-          <span className="text-xs w-14 text-right">
-            {Math.round(progress * 100)}%
-          </span>
         </div>
       )}
     </div>
   )
 }
 
-function Scene({
+function Model({
   modelUrl,
   playing,
-  progress,
-  setPlaying,
   setDuration,
-  setHasAnims,
-  onUserInteract,
   orbitTarget,
   minDistance,
   maxDistance,
   minPolarAngle,
   maxPolarAngle,
+  setHasAnims = () => {},
 }) {
   const group = useRef()
   const { scene, animations } = useGLTF(modelUrl)
   const { actions, mixer, clips } = useAnimations(animations, group)
-  const actionRef = useRef(null)
-  const durationRef = useRef(0)
-  const progressRef = useRef(0)
-  const lastTimeRef = useRef(0)
-  const userDraggingRef = useRef(false)
 
-  // keep internal progressRef synced from parent state
-  useEffect(() => {
-    progressRef.current = progress
-    if (!playing && actionRef.current && durationRef.current) {
-      const targetTime = progress * durationRef.current
-      actionRef.current.time = targetTime
-      mixer.setTime(targetTime)
-    }
-  }, [progress, playing, mixer])
+  console.log(clips)
 
   // Setup animation
   useEffect(() => {
     if (clips && clips.length > 0) {
-      const clip = clips[0]
-      durationRef.current = clip.duration || 0
-      setDuration(durationRef.current)
+      mixer.clipAction(clips[0]).play()
       setHasAnims(true)
-      // Create or reuse action
-      const action = (actions[clip.name] ||= mixer.clipAction(
-        clip,
-        group.current,
-      ))
-      action.loop = THREE.LoopRepeat
-      action.clampWhenFinished = false
-      action.play()
-      actionRef.current = action
-      if (!playing) action.paused = true
     } else {
       setHasAnims(false)
     }
     return () => {
-      mixer.stopAllAction()
+      mixer.paused = true
     }
-  }, [clips, actions, mixer, playing, setDuration, setHasAnims])
+  }, [])
 
-  // Reflect playing state into action pause
+  // handle play/pause (button press)
   useEffect(() => {
-    if (actionRef.current) actionRef.current.paused = !playing
+    mixer.clipAction(clips[0]).paused = !playing
   }, [playing])
-
-  // Drive animation when playing; sync slider
-  useFrame((state, delta) => {
-    if (!mixer || !actionRef.current || durationRef.current === 0) return
-    if (playing) {
-      mixer.update(delta)
-      const time = actionRef.current.time % durationRef.current
-      progressRef.current = time / durationRef.current
-    } else {
-      // When paused, keep mixer in sync with progressRef
-      const targetTime = progressRef.current * durationRef.current
-      actionRef.current.time = targetTime
-      mixer.setTime(targetTime)
-    }
-  })
 
   // Compute bounds and center
   const bounds = useMemo(() => {
@@ -215,9 +151,6 @@ function Scene({
     return { box, size, center }
   }, [scene])
 
-  // Controls events to mark user drag (optional use)
-  const onStart = () => onUserInteract && onUserInteract()
-
   return (
     <>
       <group ref={group}>
@@ -225,9 +158,7 @@ function Scene({
           <primitive object={scene} />
         </Center>
       </group>
-      <Bounds fit clip observe margin={0.1}>
-        {/* bounds wrapper ensures model fits in view */}
-      </Bounds>
+      <Bounds fit clip observe margin={0.1} />
       <OrbitControls
         makeDefault
         enableDamping
@@ -239,8 +170,6 @@ function Scene({
         maxDistance={maxDistance}
         {...(minPolarAngle !== undefined ? { minPolarAngle } : {})}
         {...(maxPolarAngle !== undefined ? { maxPolarAngle } : {})}
-        onStart={onStart}
-        onChange={onStart}
       />
     </>
   )

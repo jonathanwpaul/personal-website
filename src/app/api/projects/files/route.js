@@ -9,9 +9,7 @@ export async function POST(req) {
   console.log({ data })
 
   if (!error && Array.isArray(data)) {
-    const match = data.find(
-      (f) => f.file_name && /(gltf|glb)$/i.test(f.file_name),
-    )
+    const match = data.find((f) => /(gltf|glb)$/i.test(f.file_name))
     if (match) {
       const withSignedUrl = await getSignedUrl(match)
       console.log(withSignedUrl)
