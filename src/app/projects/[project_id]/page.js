@@ -1,8 +1,8 @@
 'use client'
 import { useCallback, useEffect, useState } from 'react'
 import { ImageCarousel, EmbedCarousel } from './carousel'
-import Title from '@/components/Title'
 import dynamic from 'next/dynamic'
+import { ProjectPageSkeleton } from '@/components/Skeletons'
 
 const ThreeViewer = dynamic(() => import('@/components/ThreeViewer'), {
   ssr: false,
@@ -13,20 +13,26 @@ export default function Details({ params }) {
 
   const [project, setProject] = useState({})
   const [modelUrl, setModelUrl] = useState({})
+  const [loading, setLoading] = useState(true)
+
+  console.log(project)
 
   useEffect(() => {
-    getProject(params.project_id)
-    getModelUrl(params.project_id)
-  }, [])
+    const getData = async () => {
+      await getProject(params.project_id)
+      await getModelUrl(params.project_id)
+      setLoading(false)
+    }
+    getData()
+  }, [params])
 
   const getProject = useCallback(async (project_id) => {
     const resp = await fetch('/api/projects', {
       method: 'POST',
       body: project_id,
     })
-    const project = await resp.json()
-    console.log(project)
-    setProject(project)
+    const response = await resp.json()
+    setProject(response[0])
   }, [])
 
   const getModelUrl = useCallback(async (project_id) => {
@@ -41,11 +47,29 @@ export default function Details({ params }) {
   const { name, description, bom, web_link, project_files, project_videos } =
     project
 
+  if (loading) {
+    return <ProjectPageSkeleton />
+  }
+
   return (
-    <div className="min-h-screen w-full flex flex-col items-center gap-8 p-8">
-      <Title titleText={name} />
-      <div className="w-full max-w-4xl p-6 rounded-lg ">
-        <h2 className="text-2xl font-bold mb-4">Description</h2>
+    <div className="mt-8 overflow-y-auto h-full w-full place-self-center max-w-4xl flex flex-col items-center gap-8 p-8">
+      {modelUrl && (
+        <div className="w-full items-center justify-center rounded-lg border border-primary/30 bg-background/80 text-sm opacity-80">
+          {/* Right pane: 3D viewer, fills remaining height, no page scroll */}
+          <ThreeViewer
+            modelUrl={modelUrl}
+            autoPlay={true}
+            resumeDelayMs={5000}
+            minDistance={0.1}
+            maxDistance={1}
+          />
+        </div>
+      )}
+      <h1 className="w-full text-primary text-2xl text-left font-bold">
+        {name}
+      </h1>
+      <div className="w-full ">
+        <h2 className="text-xl font-bold mb-4">Description</h2>
         <p className="mb-4">{description}</p>
         {bom && (
           <>
@@ -71,19 +95,6 @@ export default function Details({ params }) {
             }`}</h2>
             <EmbedCarousel
               list={project_videos.map((e) => e.video_embed_link)}
-            />
-          </div>
-        )}
-        {modelUrl && (
-          <div className="flex w-full items-center justify-center rounded-lg mt-12 m-4 border border-primary/30 bg-background/80 text-sm opacity-80">
-            {/* Right pane: 3D viewer, fills remaining height, no page scroll */}
-
-            <ThreeViewer
-              modelUrl={modelUrl}
-              autoPlay={true}
-              resumeDelayMs={5000}
-              minDistance={0.1}
-              maxDistance={1}
             />
           </div>
         )}

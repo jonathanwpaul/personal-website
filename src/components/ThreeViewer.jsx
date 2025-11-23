@@ -83,7 +83,7 @@ export default function ThreeViewer({
       </Canvas>
 
       {hasAnims && (
-        <div className="absolute bottom-3 left-4 right-4 flex items-center gap-3 bg-background/70 backdrop-blur rounded-md px-3 py-2 ">
+        <div className="absolute bottom-3 left-4 right-4 flex items-center gap-3 bg-background/70 backdrop-blur rounded-md px-3 py-2">
           <button
             type="button"
             onClick={() => setPlaying((p) => !p)}
@@ -91,15 +91,6 @@ export default function ThreeViewer({
           >
             {playing ? 'Pause' : 'Play'}
           </button>
-          <input
-            aria-label="Animation progress"
-            type="range"
-            min={0}
-            max={1}
-            step={0.001}
-            value={currentTime}
-            className="w-full accent-primary"
-          />
         </div>
       )}
     </div>
@@ -109,7 +100,6 @@ export default function ThreeViewer({
 function Model({
   modelUrl,
   playing,
-  setDuration,
   orbitTarget,
   minDistance,
   maxDistance,

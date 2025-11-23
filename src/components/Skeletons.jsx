@@ -1,22 +1,16 @@
 import React from 'react'
 
-export function ProjectListSkeleton({ gridStyling, count = 6 }) {
-  return (
+export function ProjectCardSkeleton({ count = 6 }) {
+  return Array.from({ length: count }).map((_, i) => (
     <div
-      className={`h-full w-full grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 ${gridStyling}`}
+      key={i}
+      className="animate-pulse rounded-lg border border-gray-200 bg-white/5 p-4"
     >
-      {Array.from({ length: count }).map((_, i) => (
-        <div
-          key={i}
-          className="animate-pulse rounded-lg border border-gray-200 bg-white/5 p-4"
-        >
-          <div className="h-44 w-full rounded-md bg-gray-300/70 dark:bg-gray-600 mb-4" />
-          <div className="h-4 bg-gray-300/70 dark:bg-gray-600 rounded w-3/4 mb-2" />
-          <div className="h-3 bg-gray-300/60 dark:bg-gray-600 rounded w-1/2" />
-        </div>
-      ))}
+      <div className="h-44 w-full rounded-md bg-gray-300/70 dark:bg-gray-600 mb-4" />
+      <div className="h-4 bg-gray-300/70 dark:bg-gray-600 rounded w-3/4 mb-2" />
+      <div className="h-3 bg-gray-300/60 dark:bg-gray-600 rounded w-1/2" />
     </div>
-  )
+  ))
 }
 
 export function ProjectPageSkeleton() {
@@ -43,5 +37,3 @@ export function ProjectPageSkeleton() {
     </div>
   )
 }
-
-export default ProjectListSkeleton

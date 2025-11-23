@@ -1,8 +1,8 @@
 'use client'
-import { useEffect, useMemo, useState, useCallback } from 'react'
+import { useEffect, useMemo, useState, useCallback, useRef } from 'react'
 import dynamic from 'next/dynamic'
 import { ProjectButton } from '@/components/ProjectButton'
-import { ProjectListSkeleton } from '@/components/Skeletons'
+import { ProjectCardSkeleton } from '@/components/Skeletons'
 
 function fuzzyMatch(query = '', text = '') {
   if (!query) return true
@@ -18,8 +18,6 @@ function fuzzyMatch(query = '', text = '') {
   return qi === q.length
 }
 
-const gridStyling = 'grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-3'
-
 export default function ProjectList() {
   const [projectList, setProjectList] = useState([])
   const [loading, setLoading] = useState(true)
@@ -33,6 +31,8 @@ export default function ProjectList() {
   const [filterOptions, setFilterOptions] = useState([]) // selected options
   const [filterPanelOpen, setFilterPanelOpen] = useState(false)
 
+  const searchInputRef = useRef(null)
+
   const getProjects = async () => {
     const resp = await fetch(`/api/projects`)
     const projects = await resp.json()
@@ -42,6 +42,18 @@ export default function ProjectList() {
 
   useEffect(() => {
     getProjects().then(setProjectList)
+  }, [])
+
+  // Bind Ctrl+K (or Cmd+K on Mac) to focus search input
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault()
+        searchInputRef.current?.focus()
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
 
   // derive available filter fields from project data (simple heuristic)
@@ -57,18 +69,20 @@ export default function ProjectList() {
     )
   }, [projectList])
 
-  const availableFilterOptions = useMemo(() => {
-    if (!filterField) return []
-    const opts = new Set()
-    projectList.forEach((p) => {
-      const val = p?.[filterField]
-      if (Array.isArray(val)) val.forEach((v) => opts.add(String(v)))
-      else if (val != null) opts.add(String(val))
+  const fieldOptionsMap = useMemo(() => {
+    const map = {}
+    availableFilterFields.forEach((field) => {
+      const opts = new Set()
+      projectList.forEach((p) => {
+        const val = p?.[field]
+        if (Array.isArray(val)) val.forEach((v) => opts.add(String(v)))
+        else if (val != null) opts.add(String(val))
+      })
+      map[field] = Array.from(opts).sort()
     })
-    return Array.from(opts)
-  }, [filterField, projectList])
+    return map
+  }, [availableFilterFields, projectList])
 
-  // filtered rows using search and filter
   const rows = useMemo(() => {
     if (!projectList) return []
     return projectList.filter((project) => {
@@ -102,106 +116,137 @@ export default function ProjectList() {
   }
 
   return (
-    <div className="flex flex-col gap-5 mt-16 m-5">
-      <div className="flex items-center justify-between gap-4">
+    <div className="h-full overflow-y-auto flex flex-col gap-12 mt-16 m-5">
+      <div className="grid grid-cols-1 lg:grid-cols-2 items-center justify-between gap-4">
         <div>
           <h1 className="font-bold text-lg text-primary">Projects</h1>
-          <h2 className="font-light">these are a few of my favorite things</h2>
+          <h2 className="font-light text-xs">
+            these are a few of my favorite things
+          </h2>
         </div>
 
-        <div className="flex items-center gap-3">
-          {/* Search input */}
-          <div className="relative">
-            <input
-              aria-label="Search projects"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search projects by name..."
-              className="px-3 py-2 rounded-md border bg-white/5 border-primary/20 focus:outline-none"
-            />
-            {query && (
-              <button
-                onClick={() => setQuery('')}
-                className="absolute right-1 top-1 text-sm px-2"
-                aria-label="Clear search"
-              >
-                ✕
-              </button>
-            )}
-          </div>
-
-          {/* Filter button group */}
-          <div className="relative">
-            <button
-              onClick={() => setFilterPanelOpen((s) => !s)}
-              className="px-3 py-2 rounded-md border bg-white/5 border-primary/20"
+        {/* Search input */}
+        <div className="flex h-full items-center p-3 gap-5">
+          <label className="input flex flex-auto items-center border-1 border-primary gap-3">
+            <svg
+              className="h-[1em] opacity-50"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
             >
-              Filter
-            </button>
+              <g
+                strokeLinejoin="round"
+                strokeLinecap="round"
+                strokeWidth="2.0"
+                fill="none"
+                stroke="currentColor"
+              >
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.3-4.3"></path>
+              </g>
+            </svg>
+            <input
+              type="search"
+              className="grow"
+              placeholder="Search"
+              ref={searchInputRef}
+              onChange={(e) => setQuery(e.target.value)}
+            />
+            <kbd className="hidden md:inline-flex kbd kbd-sm">⌘</kbd>
+            <kbd className="hidden md:inline-flex kbd kbd-sm">K</kbd>
+          </label>
 
-            {filterPanelOpen && (
-              <div className="absolute right-0 mt-2 w-64 bg-white/5 border border-primary/20 rounded shadow-md p-3 z-20">
-                <div className="mb-2">
-                  <div className="text-sm mb-1">Filter field</div>
-                  <select
-                    value={filterField || ''}
-                    onChange={(e) => {
-                      const val = e.target.value || null
-                      setFilterField(val)
-                      setFilterOptions([])
-                    }}
-                    className="w-full rounded px-2 py-1 bg-transparent border border-primary/10"
-                  >
-                    <option value="">(none)</option>
-                    {availableFilterFields.map((f) => (
-                      <option key={f} value={f}>
-                        {f}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {filterField && (
-                  <div>
-                    <div className="text-sm mb-1">
-                      Options (select to filter)
-                    </div>
-                    <div className="max-h-40 overflow-auto border-t border-primary/10 pt-2">
-                      {availableFilterOptions.length === 0 && (
-                        <div className="text-xs opacity-70">No options</div>
-                      )}
-                      {availableFilterOptions.map((opt) => (
-                        <label
-                          key={opt}
-                          className="flex items-center gap-2 text-sm"
-                        >
-                          <input
-                            type="checkbox"
-                            checked={filterOptions.includes(opt)}
-                            onChange={() => toggleFilterOption(opt)}
-                          />
-                          <span>{opt}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
+          {/* Filter button */}
+          <button
+            onClick={() => {
+              if (filterPanelOpen) setFilterOptions([])
+              setFilterPanelOpen((s) => !s)
+            }}
+            className={`h-full flex flex-none px-3 py-2 rounded-md border transition ${
+              filterPanelOpen
+                ? 'border-secondary'
+                : 'border-primary/20 hover:border-primary/40'
+            } ${filterPanelOpen ? 'text-secondary' : ''} items-center`}
+            aria-label="Toggle filters"
+            title="Toggle filters"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+            >
+              {filterPanelOpen ? (
+                <path d="M13.013 3H2l8 9.46V19l4 2v-8.54l.9-1.055M22 3l-5 5m0-5 5 5" />
+              ) : (
+                <path d="M22 3H2l8 9.46V19l4 2v-8.54z" />
+              )}
+            </svg>
+          </button>
         </div>
       </div>
 
-      {loading && <ProjectListSkeleton gridStyling={gridStyling} count={12} />}
-      {!loading && (
-        <div
-          className={`min-h-0 ${gridStyling} overflow-y-auto border-r-2 border-primary/20`}
-        >
-          {rows.map((project) => (
-            <ProjectButton project={project} selected={selected} />
-          ))}
+      {/* Filter bar - horizontal list of available filters */}
+      {!loading && availableFilterFields.length > 0 && filterPanelOpen && (
+        <div className="transition-all duration-800 ease-in-out">
+          <div className="flex flex-wrap gap-4 items-start pb-4">
+            {availableFilterFields.map((field) => {
+              const isActive = filterField === field
+              const fieldOptions = fieldOptionsMap[field] || []
+
+              return (
+                <div key={field} className="flex flex-col gap-2">
+                  <div className="text-sm font-semibold capitalize">
+                    {field}
+                  </div>
+                  <form className="filter flex gap-1 h-1/4">
+                    <input
+                      onClick={() => setFilterOptions([])}
+                      className="btn btn-square min-h-[unset] h-full"
+                      type="reset"
+                      value="×"
+                    />
+                    {fieldOptions.map((opt) => (
+                      <input
+                        type="checkbox"
+                        key={opt}
+                        onClick={() => {
+                          if (filterField !== field) {
+                            setFilterField(field)
+                            setFilterOptions([opt])
+                          } else {
+                            toggleFilterOption(opt)
+                          }
+                        }}
+                        name="tags"
+                        className={`btn min-h-[unset] h-full px-3 py-1 rounded-full text-sm border transition ${
+                          isActive && filterOptions.includes(opt)
+                            ? 'bg-primary/40 border-primary'
+                            : 'bg-white/5 border-primary/20 hover:border-primary/40'
+                        }`}
+                        aria-label={opt}
+                      />
+                    ))}
+                  </form>
+                </div>
+              )
+            })}
+          </div>
         </div>
       )}
+
+      <div
+        className={`h-full overflow-y-auto grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-3 border-primary/20`}
+      >
+        {loading && <ProjectCardSkeleton count={12} />}
+        {!loading &&
+          rows.map((project) => (
+            <ProjectButton project={project} selected={selected} />
+          ))}
+      </div>
     </div>
   )
 }
