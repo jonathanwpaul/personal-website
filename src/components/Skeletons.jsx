@@ -1,8 +1,10 @@
 import React from 'react'
 
-export function ProjectListSkeleton({ count = 6 }) {
+export function ProjectListSkeleton({ gridStyling, count = 6 }) {
   return (
-    <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+    <div
+      className={`h-full w-full grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 ${gridStyling}`}
+    >
       {Array.from({ length: count }).map((_, i) => (
         <div
           key={i}

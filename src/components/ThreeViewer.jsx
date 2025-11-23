@@ -118,7 +118,7 @@ function Model({
   setHasAnims = () => {},
 }) {
   const group = useRef()
-  const { scene, animations } = useGLTF(modelUrl)
+  const { scene, animations } = useGLTF('' + modelUrl)
   const { actions, mixer, clips } = useAnimations(animations, group)
 
   console.log(clips)

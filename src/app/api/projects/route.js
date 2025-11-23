@@ -10,8 +10,9 @@ export async function GET() {
   return Response.json(projects)
 }
 
-export async function POST() {
-  const { project_id } = params
+export async function POST(req) {
+  const project_id = await req.text()
+  console.log(project_id)
   const { data: project, error } = await supabase
     .from('project')
     .select('id, name, description, web_link')

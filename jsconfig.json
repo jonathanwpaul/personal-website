@@ -7,6 +7,9 @@
       ],
       "@/lib/*": [
         "src/app/api/lib/*"
+      ],
+      "@/components/*": [
+        "src/components/*"
       ]
     }
   }
