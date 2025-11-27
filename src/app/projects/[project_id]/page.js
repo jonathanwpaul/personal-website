@@ -1,13 +1,10 @@
 'use client'
 import { useCallback, useEffect, useState } from 'react'
-import { ImageCarousel, EmbedCarousel } from './carousel'
-import dynamic from 'next/dynamic'
+import { EmbedCarousel } from './carousel'
 import { ProjectPageSkeleton } from '@/components/Skeletons'
 import { ThreeViewer } from '@/components/ThreeViewer'
 
 export default function Details({ params }) {
-  if (!params.project_id) return <p>Nothing to see here :(</p>
-
   const [project, setProject] = useState({})
   const [modelUrl, setModelUrl] = useState({})
   const [loading, setLoading] = useState(true)
@@ -47,6 +44,8 @@ export default function Details({ params }) {
   if (loading) {
     return <ProjectPageSkeleton />
   }
+
+  if (!params.project_id) return <p>Nothing to see here :(</p>
 
   return (
     <div className="mt-8 overflow-y-auto h-full w-full place-self-center max-w-4xl flex flex-col items-center gap-8 p-8">
