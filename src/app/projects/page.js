@@ -4,6 +4,8 @@ import dynamic from 'next/dynamic'
 import { ProjectCard } from '@/components/ProjectCard'
 import { ProjectCardSkeleton } from '@/components/Skeletons'
 
+const CARDS_PER_ROW = 5
+
 function fuzzyMatch(query = '', text = '') {
   if (!query) return true
   const q = query.toLowerCase()
@@ -243,9 +245,9 @@ export default function ProjectList() {
       )}
 
       <div
-        className={`h-full overflow-y-auto grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3 border-primary/20`}
+        className={`h-full overflow-y-auto grid grid-cols-1 md:grid-cols-3 lg:grid-cols-${CARDS_PER_ROW} gap-3 border-primary/20`}
       >
-        {loading && <ProjectCardSkeleton count={12} />}
+        {loading && <ProjectCardSkeleton count={CARDS_PER_ROW * 2} />}
         {!loading &&
           rows.map((project) => (
             <ProjectCard

@@ -6,24 +6,25 @@ import { ThreeViewer } from '@/components/ThreeViewer'
 
 export default function Details({ params }) {
   const [project, setProject] = useState({})
-  const [modelUrl, setModelUrl] = useState({})
+  const [modelUrl, setModelUrl] = useState()
   const [loading, setLoading] = useState(true)
-
-  console.log(project)
+  const [animationLoading, setAnimationLoading] = useState(true)
 
   useEffect(() => {
-    const getData = async () => {
-      await getProject(params.project_id)
-      await getModelUrl(params.project_id)
-      setLoading(false)
-    }
-    getData()
+    getProject(params.project_name)
+    setLoading(false)
   }, [params])
 
-  const getProject = useCallback(async (project_id) => {
+  useEffect(() => {
+    if (!project || !project.id) return
+    getModelUrl(project?.id)
+    setAnimationLoading(false)
+  }, [project])
+
+  const getProject = useCallback(async (project_name) => {
     const resp = await fetch('/api/projects', {
       method: 'POST',
-      body: project_id,
+      body: project_name,
     })
     const response = await resp.json()
     setProject(response[0])
@@ -38,20 +39,16 @@ export default function Details({ params }) {
     setModelUrl(url)
   }, [])
 
+  if (loading) return <ProjectPageSkeleton />
+  if (!project) return
+
   const { name, description, bom, web_link, project_files, project_videos } =
     project
-
-  if (loading) {
-    return <ProjectPageSkeleton />
-  }
-
-  if (!params.project_id) return <p>Nothing to see here :(</p>
 
   return (
     <div className="mt-8 overflow-y-auto h-full w-full place-self-center max-w-4xl flex flex-col items-center gap-8 p-8">
       {modelUrl && (
         <div className="w-full items-center justify-center rounded-lg border border-primary/30 bg-background/80 text-sm opacity-80">
-          {/* Right pane: 3D viewer, fills remaining height, no page scroll */}
           <ThreeViewer
             modelUrl={modelUrl}
             autoPlay={true}

@@ -11,12 +11,11 @@ export async function GET() {
 }
 
 export async function POST(req) {
-  const project_id = await req.text()
-  console.log(project_id)
+  const project_name = await req.text()
   const { data: project, error } = await supabase
     .from('project')
     .select('id, name, description, web_link')
-    .eq('id', project_id)
+    .eq('name', project_name)
   if (error) {
     return new Response.json({ error: error.message, status: error.status })
   }

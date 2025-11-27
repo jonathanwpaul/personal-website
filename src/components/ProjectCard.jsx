@@ -3,7 +3,7 @@ import { ThumbnailPlaceholder } from './ThumbnailPlaceholder'
 
 export const ProjectCard = ({ project, selected }) => (
   <Link
-    href={`/projects/${project.id}`}
+    href={`/projects/${project.name}`}
     className={
       'min-h-[400px] flex flex-col text-left p-4 content-end rounded-lg overflow-hidden border transition hover:border-primary ' +
       (selected?.id === project.id

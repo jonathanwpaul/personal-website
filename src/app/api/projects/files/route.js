@@ -6,13 +6,10 @@ export async function POST(req) {
     project: project_id,
   })
 
-  console.log({ data })
-
   if (!error && Array.isArray(data)) {
     const match = data.find((f) => /(gltf|glb)$/i.test(f.file_name))
     if (match) {
       const withSignedUrl = await getSignedUrl(match)
-      console.log(withSignedUrl)
       return new Response(withSignedUrl.signed_url)
     }
   }

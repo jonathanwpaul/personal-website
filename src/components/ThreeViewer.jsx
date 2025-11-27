@@ -111,8 +111,6 @@ function Model({
   const { scene, animations } = useGLTF('' + modelUrl)
   const { actions, mixer, clips } = useAnimations(animations, group)
 
-  console.log(clips)
-
   // Setup animation
   useEffect(() => {
     if (clips && clips.length > 0) {
