@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useMemo, useState, useCallback, useRef } from 'react'
 import dynamic from 'next/dynamic'
-import { ProjectButton } from '@/components/ProjectButton'
+import { ProjectCard } from '@/components/ProjectCard'
 import { ProjectCardSkeleton } from '@/components/Skeletons'
 
 function fuzzyMatch(query = '', text = '') {
@@ -127,7 +127,7 @@ export default function ProjectList() {
 
         {/* Search input */}
         <div className="flex h-full items-center p-3 gap-5">
-          <label className="input flex flex-auto items-center border-1 border-primary gap-3">
+          <label className="input flex flex-auto items-center border-1 border-text gap-2">
             <svg
               className="h-[1em] opacity-50"
               xmlns="http://www.w3.org/2000/svg"
@@ -151,8 +151,12 @@ export default function ProjectList() {
               ref={searchInputRef}
               onChange={(e) => setQuery(e.target.value)}
             />
-            <kbd className="hidden md:inline-flex kbd kbd-sm">⌘</kbd>
-            <kbd className="hidden md:inline-flex kbd kbd-sm">K</kbd>
+            <kbd className="hidden md:inline-flex kbd kbd-sm bg-background/80 text-primary">
+              ⌘
+            </kbd>
+            <kbd className="hidden md:inline-flex kbd kbd-sm bg-background/80 text-primary">
+              K
+            </kbd>
           </label>
 
           {/* Filter button */}
@@ -163,9 +167,9 @@ export default function ProjectList() {
             }}
             className={`h-full flex flex-none px-3 py-2 rounded-md border transition ${
               filterPanelOpen
-                ? 'border-secondary'
-                : 'border-primary/20 hover:border-primary/40'
-            } ${filterPanelOpen ? 'text-secondary' : ''} items-center`}
+                ? 'border-primary text-primary'
+                : 'border-text hover:border-primary/40 hover:text-primary'
+            } items-center`}
             aria-label="Toggle filters"
             title="Toggle filters"
           >
@@ -239,12 +243,12 @@ export default function ProjectList() {
       )}
 
       <div
-        className={`h-full overflow-y-auto grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-3 border-primary/20`}
+        className={`h-full overflow-y-auto grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3 border-primary/20`}
       >
         {loading && <ProjectCardSkeleton count={12} />}
         {!loading &&
           rows.map((project) => (
-            <ProjectButton
+            <ProjectCard
               key={project.id}
               project={project}
               selected={selected}
