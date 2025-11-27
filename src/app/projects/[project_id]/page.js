@@ -3,10 +3,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { ImageCarousel, EmbedCarousel } from './carousel'
 import dynamic from 'next/dynamic'
 import { ProjectPageSkeleton } from '@/components/Skeletons'
-
-const ThreeViewer = dynamic(() => import('@/components/ThreeViewer'), {
-  ssr: false,
-})
+import { ThreeViewer } from '@/components/ThreeViewer'
 
 export default function Details({ params }) {
   if (!params.project_id) return <p>Nothing to see here :(</p>

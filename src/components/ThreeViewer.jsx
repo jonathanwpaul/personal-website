@@ -36,7 +36,7 @@ import * as THREE from 'three'
  * - When the user interacts with the slider, playback pauses; if idle for resumeDelayMs, playback resumes.
  * - If the model has no animations, the slider is hidden.
  */
-export default function ThreeViewer({
+export function ThreeViewer({
   modelUrl,
   autoPlay = true,
   resumeDelayMs = 5000,

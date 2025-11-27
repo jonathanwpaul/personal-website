@@ -244,7 +244,11 @@ export default function ProjectList() {
         {loading && <ProjectCardSkeleton count={12} />}
         {!loading &&
           rows.map((project) => (
-            <ProjectButton project={project} selected={selected} />
+            <ProjectButton
+              key={project.id}
+              project={project}
+              selected={selected}
+            />
           ))}
       </div>
     </div>
