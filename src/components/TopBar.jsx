@@ -1,56 +1,70 @@
-'use client'
 import ThemeToggle from '@/components/ThemeToggle'
-import { usePathname } from 'next/navigation'
-import Link from 'next/link'
+import BreadcrumbNav from '@/components/BreadcrumbNav'
+import fs from 'fs'
+import path from 'path'
 
-function formatPath(pathname) {
-  // Always show a root entry and then each segment as clickable items
-  const segments =
-    pathname && pathname !== '/' ? pathname.split('/').filter(Boolean) : []
+// Build tree (same as RoutesTree)
+function buildTree(dirPath, rel = '') {
+  const entries = fs.readdirSync(dirPath, { withFileTypes: true })
+  const ignored = new Set(['api', 'lib', 'components', 'providers', 'public'])
 
-  // Build crumbs array with { label, href }
-  const crumbs = []
-  // Root - show as ~/jonathan to keep prior styling intent
-  crumbs.push({ label: '~' })
-  crumbs.push({ label: 'jonathan', href: '/' })
-
-  let accumulated = ''
-  segments.forEach((seg) => {
-    accumulated += `/${seg}`
-    // decode URI components for readability
-    const label = decodeURIComponent(seg)
-    crumbs.push({ label, href: accumulated })
-  })
-
-  return (
-    <nav className="font-mono text-sm text-text/90" aria-label="Breadcrumb">
-      <div className="breadcrumbs">
-        <ul>
-          {crumbs.map((c, idx) => {
-            const isLast = idx === crumbs.length - 1
-            const isFirst = idx === 0
-            return (
-              <li key={c.href}>
-                {isFirst && <p className="">{c.label}</p>}
-                {isLast && <p className="text-primary">{c.label}</p>}
-                {!isLast && !isFirst && <Link href={c.href}>{c.label}</Link>}
-              </li>
-            )
-          })}
-        </ul>
-      </div>
-    </nav>
+  const hasPage = entries.some(
+    (e) => e.isFile() && /^page\.(js|jsx|ts|tsx)$/.test(e.name)
   )
+
+  const children = []
+  for (const e of entries) {
+    if (!e.isDirectory()) continue
+    if (e.name.includes('[') || e.name.includes(']')) continue
+    if (ignored.has(e.name)) continue
+    try {
+      const child = buildTree(
+        path.join(dirPath, e.name),
+        rel ? rel + '/' + e.name : e.name
+      )
+      if (child) children.push(child)
+    } catch (err) {
+      // ignore
+    }
+  }
+
+  if (!hasPage && children.length === 0) return null
+
+  return {
+    name: path.basename(rel),
+    route: '/' + (rel || ''),
+    hasPage,
+    children,
+  }
+}
+
+// Serialize tree to JSON for client component
+function serializeTree(tree) {
+  if (!tree) return null
+  return {
+    name: tree.name,
+    route: tree.route,
+    hasPage: tree.hasPage,
+    children: tree.children.map(serializeTree),
+  }
 }
 
 export default function TopBar() {
-  const pathname = usePathname()
-  const path = formatPath(pathname)
+  let tree = null
+
+  try {
+    const appDir = path.join(process.cwd(), 'src', 'app')
+    tree = buildTree(appDir, '')
+  } catch (err) {
+    console.error('TopBar tree error:', err)
+  }
+
+  const serializedTree = serializeTree(tree)
 
   return (
-    <header className="absolute top-0 z-20 w-full border-b border-text/30 bg-background/20 backdrop-blur">
+    <header className="sticky top-0 z-20 w-full border-b border-text/30 bg-background/20 backdrop-blur">
       <div className="mx-auto flex items-center h-full justify-between px-4">
-        <div>{path}</div>
+        <BreadcrumbNav tree={serializedTree} />
         <ThemeToggle className="ml-4" />
       </div>
     </header>

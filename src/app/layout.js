@@ -1,6 +1,5 @@
 import { Fira_Code } from 'next/font/google'
 import './globals.css'
-import { ProjectProvider } from '@/providers/ProjectProvider'
 import TopBar from '@/components/TopBar'
 
 const font = Fira_Code({ subsets: ['latin'] })
@@ -16,8 +15,10 @@ export default function RootLayout({ children }) {
       <body
         className={`${font.className} flex flex-col h-screen bg-background`}
       >
-        <TopBar />
-        {children}
+        <main className="">
+          <TopBar />
+          {children}
+        </main>
       </body>
     </html>
   )

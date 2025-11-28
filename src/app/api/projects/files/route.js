@@ -1,4 +1,5 @@
-import { supabase } from '@/lib/db'
+import { supabase } from '@/db'
+import { getSignedUrl } from '@/utils'
 
 export async function POST(req) {
   const project_id = await req.text()
@@ -15,15 +16,4 @@ export async function POST(req) {
   }
 
   return new Response(null, { statusText: 'File not found' })
-}
-
-const getSignedUrl = async (file) => {
-  const { data: signedUrlData, error: urlError } = await supabase.storage
-    .from(file.bucket_id)
-    .createSignedUrl(file.file_name, 60) // 60s expiration
-  if (urlError) throw urlError
-  return {
-    ...file,
-    signed_url: signedUrlData.signedUrl,
-  }
 }

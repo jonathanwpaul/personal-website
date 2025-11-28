@@ -5,8 +5,14 @@
       "@/*": [
         "src/*"
       ],
-      "@/lib/*": [
-        "src/app/api/lib/*"
+      "@/utils": [
+        "src/app/api/utils/index.js"
+      ],
+      "@/helpers": [
+        "src/helpers/index.js"
+      ],
+      "@/db": [
+        "src/app/api/lib/db.js"
       ],
       "@/components/*": [
         "src/components/*"
