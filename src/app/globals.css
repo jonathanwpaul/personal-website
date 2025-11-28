@@ -1,3 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.breadcrumbs ul li::before {
+    transform: none;
+    content: '/';
+    border-top: none;
+    border-right: none;
+    margin-right: 0.125rem;
+    margin-left: 0.0625rem;
+    height: 100%;
+    font-size: 1rem;
+}
+
+.breadcrumbs ul li:first-child::before {
+    content:'';
+}
+
