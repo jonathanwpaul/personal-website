@@ -118,9 +118,9 @@ export default function ProfileSection() {
             </div>
           </div>
         </div>
-      </div>
-      <div className="flex text-secondary hover:underline">
-        <Link href="/projects">View my projects</Link>
+        <div className="flex text-secondary hover:underline">
+          <Link href="/projects">View my projects</Link>
+        </div>
       </div>
 
       <div className="flex flex-col gap-4">
