@@ -22,7 +22,6 @@ export async function POST() {
     .from('socials')
     .select('*')
 
-  console.log({ handles })
   if (handlesError) {
     return new Response(null, {
       statusText: 'unable to load handles: ' + socialError,

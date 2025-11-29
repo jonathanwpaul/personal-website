@@ -8,6 +8,7 @@ import {
   LinkIcon,
 } from '@/components/Icons'
 import { createBlobFromSignedUrl } from '@/helpers'
+import Link from 'next/link'
 
 import { useState, useEffect } from 'react'
 
@@ -99,14 +100,12 @@ export default function ProfileSection() {
               J
             </div>
           )}
-          <h1 className="text-2xl font-semibold text-primary">
+          <h1 className="text-2xl font-semibold">
             <span>{user.first_name}</span>
             <span> {user.last_name}</span>
           </h1>
           <div className="flex flex-col">
-            <p className="text-sm text-gray-600 dark:text-gray-300">
-              {user.bio}
-            </p>
+            <p className="text-sm text-primary">{user.bio}</p>
             <div className="mt-10 flex flex-col gap-2">
               {handles.map((h) => (
                 <IconRow
@@ -119,6 +118,9 @@ export default function ProfileSection() {
             </div>
           </div>
         </div>
+      </div>
+      <div className="flex text-secondary hover:underline">
+        <Link href="/projects">View my projects</Link>
       </div>
 
       <div className="flex flex-col gap-4">

@@ -1,0 +1,16 @@
+-- social table
+for each social:
+    handle, link
+
+gh
+printables
+tiktok
+ig
+yt
+
+-- user table
+profile picture
+first name
+last name
+description
+about

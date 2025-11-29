@@ -5,7 +5,7 @@ export async function GET() {
     .from('project')
     .select('id, name, description, status')
   if (error) {
-    return new Response.json({ error: error.message, status: error.status })
+    return Response.json({ error: error.message, status: error.status })
   }
   return Response.json(projects)
 }
@@ -17,7 +17,7 @@ export async function POST(req) {
     .select('id, name, description, web_link')
     .eq('name', project_name)
   if (error) {
-    return new Response.json({ error: error.message, status: error.status })
+    return Response.json({ error: error.message, status: error.status })
   }
   return Response.json(project)
 }
