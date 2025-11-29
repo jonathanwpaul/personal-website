@@ -88,9 +88,9 @@ export default function ProfileSection() {
 
   return (
     <div className="flex flex-col items-center gap-20">
-      <div className="flex flex-col md:flex-row md:items-center md:gap-8">
+      <div className="h-[100vh] md:h-full flex flex-col items-center gap-12">
         {/* Profile */}
-        <div className="h-[100vh] md:h-full flex-shrink-0 flex flex-col items-center gap-6">
+        <div className="flex-shrink-0 flex flex-col items-center gap-6">
           {profilePictureUrl ? (
             <img className={profilePictureClass} src={profilePictureUrl} />
           ) : (
