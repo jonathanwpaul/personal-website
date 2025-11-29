@@ -29,7 +29,8 @@ export async function POST() {
   }
 
   user.handles = handles
-  user.profilePictureUrl = getProfilePicture()
+  user.profilePictureUrl = await getProfilePicture()
+  console.log(user)
 
   return Response.json(user)
 }
