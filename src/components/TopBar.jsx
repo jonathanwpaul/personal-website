@@ -11,7 +11,6 @@ export default function TopBar() {
     <header className="sticky top-0 z-20 w-full border-b border-text/30 bg-background/20 backdrop-blur">
       <div className="mx-auto flex items-center h-full justify-between px-4">
         <BreadcrumbNav tree={fullTree} />
-        <ThemeToggle className="ml-4" />
       </div>
     </header>
   )
