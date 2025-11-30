@@ -8,7 +8,7 @@ export default function TopBar() {
   ]
 
   return (
-    <header className="sticky top-0 z-20 w-full border-b border-text/30 bg-background/20 backdrop-blur">
+    <header className="sticky h-[30px] top-0 z-20 w-full border-b border-text/30 bg-background/20 backdrop-blur">
       <div className="mx-auto flex items-center h-full justify-between px-4">
         <BreadcrumbNav tree={fullTree} />
       </div>

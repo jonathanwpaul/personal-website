@@ -20,13 +20,16 @@ export function findBreadcrumbInfo(tree, currentPath) {
   let currentChildren = tree
   const breadcrumb = []
 
+  let match
   let runningPath = ''
 
   for (const seg of segments) {
     runningPath += '/' + seg
 
-    const match = currentChildren.find((n) => n.name === seg)
-    if (!match) break
+    match = currentChildren.find((n) => n.name === seg)
+    if (!match) {
+      break
+    }
 
     breadcrumb.push({
       name: match.name,
@@ -35,6 +38,13 @@ export function findBreadcrumbInfo(tree, currentPath) {
     })
 
     currentChildren = match.children
+  }
+
+  if (match.children.length > 0) {
+    breadcrumb.push({
+      name: '...',
+      siblings: match.children,
+    })
   }
 
   return breadcrumb
@@ -49,12 +59,15 @@ export default function BreadcrumbClient({ tree }) {
     currentTree = currentTree.children.find((child) => child.name === step)
   })
   const breadcrumb = findBreadcrumbInfo(tree, path)
+  console.log(breadcrumb)
 
   return (
     <BreadcrumbList>
       {breadcrumb.map((item, i) => {
-        const breadcrumbLink = (
+        const breadcrumbLink = item.path ? (
           <BreadcrumbLink href={item.path}>{item.name}</BreadcrumbLink>
+        ) : (
+          <p>{item.name}</p>
         )
         const isLast = i === breadcrumb.length - 1
         return (
