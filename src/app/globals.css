@@ -170,6 +170,37 @@
   --tracking-widest: calc(var(--tracking-normal) + 0.1em);
 }
 
+html,
+body {
+  height: 100%;
+}
+
 body {
   letter-spacing: var(--tracking-normal);
+  overflow: hidden; /* prevent page/body scroll; inner regions manage their own scroll */
+}
+
+/* Global box sizing for predictable layout */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Global focus-visible styles: draw focus *inside* elements to avoid clipping */
+button,
+a,
+input,
+select,
+textarea,
+[role='button'] {
+  outline: none;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[role='button']:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--ring) !important;
 }

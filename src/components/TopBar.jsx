@@ -11,7 +11,7 @@ export default async function TopBar() {
   console.log(JSON.stringify(fullTree, null, 2))
 
   return (
-    <header className="sticky h-[30px] top-0 z-20 w-full border-b border-text/30 bg-background/20 backdrop-blur">
+    <header className="h-1/10 top-0 z-20 w-full border-b border-text/30 bg-background/20 backdrop-blur">
       <div className="mx-auto flex items-center h-full justify-between px-4">
         <BreadcrumbNav tree={fullTree} />
       </div>

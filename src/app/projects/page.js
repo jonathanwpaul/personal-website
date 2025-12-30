@@ -1,4 +1,5 @@
 'use client'
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useEffect, useMemo, useState, useCallback, useRef } from 'react'
 import dynamic from 'next/dynamic'
 import { ProjectCard } from '@/components/ProjectCard'
@@ -118,7 +119,7 @@ export default function ProjectList() {
   }
 
   return (
-    <div className="h-full overflow-y-auto flex flex-col gap-12 mt-16 m-5">
+    <div className="h-full flex flex-col gap-16 px-5 pt-16 pb-5 overflow-hidden">
       <div className="grid grid-cols-1 lg:grid-cols-2 items-center justify-between gap-4">
         <div>
           <h1 className="font-bold text-lg text-primary">Projects</h1>
@@ -128,10 +129,10 @@ export default function ProjectList() {
         </div>
 
         {/* Search input */}
-        <div className="flex h-full items-center p-3 gap-5">
-          <label className="input flex flex-auto items-center border-1 border-text gap-2">
+        <div className="flex h-full items-center gap-3">
+          <label className="flex flex-auto h-full items-center gap-2 rounded-lg border px-3 py-2 text-sm">
             <svg
-              className="h-[1em] opacity-50"
+              className="h-4 w-4 text-primary/70"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
             >
@@ -148,12 +149,12 @@ export default function ProjectList() {
             </svg>
             <input
               type="search"
-              className="grow"
-              placeholder="Search"
+              className="grow bg-transparent outline-none placeholder:text-text/60 text-sm"
+              placeholder="Search projects"
               ref={searchInputRef}
               onChange={(e) => setQuery(e.target.value)}
             />
-            <kbd className="hidden md:inline-flex kbd kbd-sm bg-background/80 text-primary">
+            <kbd className="hidden md:inline-flex kbd kbd-sm bg-background/80 text-primary/80 border border-primary/40">
               ⌘
             </kbd>
             <kbd className="hidden md:inline-flex kbd kbd-sm bg-background/80 text-primary">
@@ -170,7 +171,7 @@ export default function ProjectList() {
             className={`h-full flex flex-none px-3 py-2 rounded-md border transition ${
               filterPanelOpen
                 ? 'border-primary text-primary'
-                : 'border-text hover:border-primary/40 hover:text-primary'
+                : 'hover:border-primary/40 hover:text-primary'
             } items-center`}
             aria-label="Toggle filters"
             title="Toggle filters"
@@ -245,7 +246,7 @@ export default function ProjectList() {
       )}
 
       <div
-        className={`h-full overflow-y-auto grid grid-cols-1 md:grid-cols-3 lg:grid-cols-${CARDS_PER_ROW} gap-3 border-primary/20`}
+        className={`overflow-y-auto grid grid-cols-1 md:grid-cols-3 lg:grid-cols-${CARDS_PER_ROW} gap-3 border-primary/20`}
       >
         {loading && <ProjectCardSkeleton count={CARDS_PER_ROW * 2} />}
         {!loading &&
