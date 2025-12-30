@@ -1,43 +1,46 @@
 'use client'
-import { useCallback, useEffect, useState } from 'react'
+/* eslint-disable react-hooks/set-state-in-effect */
+import { useEffect, useState, use } from 'react'
 import { EmbedCarousel } from './carousel'
 import { ProjectPageSkeleton } from '@/components/Skeletons'
 import { ThreeViewer } from '@/components/ThreeViewer'
 
-export default function Details({ params }) {
+export default function Details(props) {
+  const params = use(props.params)
   const [project, setProject] = useState({})
   const [modelUrl, setModelUrl] = useState()
   const [loading, setLoading] = useState(true)
   const [animationLoading, setAnimationLoading] = useState(true)
 
-  useEffect(() => {
-    getProject(params.project_name)
-    setLoading(false)
-  }, [params])
-
-  useEffect(() => {
-    if (!project || !project.id) return
-    getModelUrl(project?.id)
-    setAnimationLoading(false)
-  }, [project])
-
-  const getProject = useCallback(async (project_name) => {
+  const fetchProject = async (project_name) => {
     const resp = await fetch('/api/projects', {
       method: 'POST',
       body: project_name,
     })
     const response = await resp.json()
     setProject(response[0])
-  }, [])
+    setLoading(false)
+  }
 
-  const getModelUrl = useCallback(async (project_id) => {
+  const fetchModelUrl = async (project_id) => {
     const resp = await fetch('/api/projects/files', {
       method: 'POST',
       body: project_id,
     })
     const url = await resp.text()
     setModelUrl(url)
-  }, [])
+    setAnimationLoading(false)
+  }
+
+  useEffect(() => {
+    if (!params?.project_name) return
+    fetchProject(params.project_name)
+  }, [params?.project_name])
+
+  useEffect(() => {
+    if (!project || !project.id) return
+    fetchModelUrl(project.id)
+  }, [project])
 
   if (loading) return <ProjectPageSkeleton />
   if (!project) return
