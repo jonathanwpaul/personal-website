@@ -1,5 +1,5 @@
 'use client'
-/* eslint-disable react-hooks/set-state-in-effect */
+ 
 import { useEffect, useMemo, useState, useCallback, useRef } from 'react'
 import dynamic from 'next/dynamic'
 import { ProjectCard } from '@/components/ProjectCard'
@@ -248,7 +248,7 @@ export default function ProjectList() {
       )}
 
       <div
-        className={`overflow-y-auto grid grid-cols-1 md:grid-cols-3 lg:grid-cols-${CARDS_PER_ROW} gap-3 p-6 border border-primary/20 rounded-lg shadow-inner bg-background/80`}
+        className={`overflow-y-auto grid grid-cols-1 md:grid-cols-4 lg:grid-cols-${CARDS_PER_ROW} gap-3 p-6 border border-primary/20 rounded-lg shadow-inner bg-background/80`}
       >
         {loading && <ProjectCardSkeleton count={CARDS_PER_ROW * 2} />}
         {!loading &&
