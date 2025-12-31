@@ -87,9 +87,9 @@ export default function ProfileSection() {
   if (!user) return
 
   return (
-    <div className="max-w-2xl mx-auto p-8">
-      <div className="flex flex-col items-center gap-20">
-        <div className="h-[100vh] md:h-full flex flex-col items-center gap-12">
+    <div className="max-w-4xl h-full mx-auto p-8 overflow-y-auto">
+      <div className="flex flex-col md:flex-row items-center gap-20">
+        <div className="h-screen md:h-full flex flex-1 flex-col items-center gap-12">
           {/* Profile */}
           <div className="flex-shrink-0 flex flex-col items-center gap-6">
             {profilePictureUrl ? (
@@ -124,7 +124,7 @@ export default function ProfileSection() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-2 flex-col gap-4">
           <h3 className="text-3xl font-bold text-center">About</h3>
           <div
             className="[&>ul]:list-disc [&>ul]:m-4 [&>ul]:list-inside [&>ul]:pl-6 [&>ul>li::marker]:text-primary"
