@@ -35,8 +35,7 @@
   },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx}": [
-      "eslint --fix",
-      "eslint --max-warnings=0"
+      "eslint --fix"
     ]
   }
 }

@@ -8,6 +8,7 @@ import {
   LinkIcon,
 } from '@/components/Icons'
 import { createBlobFromSignedUrl } from '@/helpers'
+import Image from 'next/image'
 import Link from 'next/link'
 
 import { useState, useEffect } from 'react'
@@ -87,10 +88,10 @@ export default function ProfileSection() {
   if (!user) return
 
   return (
-    <div className="max-w-4xl h-full mx-auto p-8 overflow-y-auto">
-      <div className="flex flex-col md:flex-row items-center gap-20">
-        <div className="h-screen md:h-full flex flex-1 flex-col items-center gap-12">
-          {/* Profile */}
+    <div className="max-w-5xl h-full mx-auto px-6 py-8 overflow-y-auto snap-y snap-mandatory md:snap-none">
+      <div className="flex h-full flex-col md:grid md:grid-cols-3 md:gap-12 items-stretch">
+        {/* Profile column */}
+        <section className="min-h-[calc(100vh-30px)] md:min-h-0 md:col-span-1 flex flex-col items-center gap-12 p-6 md:justify-center snap-start">
           <div className="flex-shrink-0 flex flex-col items-center gap-6">
             {profilePictureUrl ? (
               <img className={profilePictureClass} src={profilePictureUrl} />
@@ -119,18 +120,24 @@ export default function ProfileSection() {
               </div>
             </div>
           </div>
-          <div className="flex text-secondary hover:underline">
-            <Link href="/projects">View my projects</Link>
+          <div className="flex text-secondary">
+            <Link
+              href="/projects"
+              className="h-full flex flex-none px-3 py-2 rounded-md border transition border-secondary text-secondary items-center hover:bg-secondary hover:text-white"
+            >
+              View my projects
+            </Link>
           </div>
-        </div>
+        </section>
 
-        <div className="flex flex-2 flex-col gap-4">
-          <h3 className="text-3xl font-bold text-center">About</h3>
+        {/* About column */}
+        <section className="mt-12 md:mt-0 flex flex-col gap-4 md:col-span-2 md:justify-center md:px-8 min-h-[calc(100vh-30px)] md:min-h-0 snap-start">
+          <h3 className="text-3xl font-bold text-center md:text-left">About</h3>
           <div
             className="[&>ul]:list-disc [&>ul]:m-4 [&>ul]:list-inside [&>ul]:pl-6 [&>ul>li::marker]:text-primary"
             dangerouslySetInnerHTML={{ __html: user.about }}
           ></div>
-        </div>
+        </section>
       </div>
     </div>
   )
