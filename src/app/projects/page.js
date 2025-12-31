@@ -130,7 +130,7 @@ export default function ProjectList() {
 
         {/* Search input */}
         <div className="flex h-full items-center gap-3">
-          <label className="flex flex-auto h-full items-center gap-2 rounded-lg border px-3 py-2 text-sm">
+          <label className="search-input-wrapper flex flex-auto h-full items-center gap-2 rounded-lg border px-3 py-2 text-sm bg-background/80">
             <svg
               className="h-4 w-4 text-primary/70"
               xmlns="http://www.w3.org/2000/svg"
@@ -149,17 +149,19 @@ export default function ProjectList() {
             </svg>
             <input
               type="search"
-              className="grow bg-transparent outline-none placeholder:text-text/60 text-sm"
+              className="grow bg-transparent placeholder:text-text/60 text-sm"
               placeholder="Search projects"
               ref={searchInputRef}
               onChange={(e) => setQuery(e.target.value)}
             />
-            <kbd className="hidden md:inline-flex kbd kbd-sm bg-background/80 text-primary/80 border border-primary/40">
-              ⌘
-            </kbd>
-            <kbd className="hidden md:inline-flex kbd kbd-sm bg-background/80 text-primary">
-              K
-            </kbd>
+            <div className="hidden md:flex items-center gap-1 text-[10px] font-mono text-primary/80">
+              <kbd className="kbd kbd-md px-2 border border-primary/40 rounded-lg bg-background/80">
+                ⌘
+              </kbd>
+              <kbd className="kbd kbd-sm px-2 border border-primary/40 rounded-lg bg-background/80">
+                K
+              </kbd>
+            </div>
           </label>
 
           {/* Filter button */}
@@ -246,7 +248,7 @@ export default function ProjectList() {
       )}
 
       <div
-        className={`overflow-y-auto grid grid-cols-1 md:grid-cols-3 lg:grid-cols-${CARDS_PER_ROW} gap-3 border-primary/20`}
+        className={`overflow-y-auto grid grid-cols-1 md:grid-cols-3 lg:grid-cols-${CARDS_PER_ROW} gap-3 p-6 border border-primary/20 rounded-lg shadow-inner bg-background/80`}
       >
         {loading && <ProjectCardSkeleton count={CARDS_PER_ROW * 2} />}
         {!loading &&
