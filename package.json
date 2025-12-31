@@ -34,9 +34,9 @@
     "tailwindcss": "^3.4.1"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
+    "src/**/*.{js,jsx,ts,tsx}": [
       "eslint --fix",
-      "eslint"
+      "eslint --max-warnings=0"
     ]
   }
 }
