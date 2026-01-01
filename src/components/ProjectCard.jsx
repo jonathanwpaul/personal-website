@@ -78,13 +78,15 @@ export const ProjectCard = ({ project, selected }) => {
         )}
       </div>
       <div className="flex flex-1 flex-col justify-center gap-1 md:gap-2 md:w-full items-start backdrop-blur-sm">
-        <span className="text-md font-semibold">{project.name}</span>
-        <span className="text-sm opacity-90">{project.description}</span>
+        <span className="text-sm md:text-md font-semibold">{project.name}</span>
+        <span className="text-xs md:text-sm opacity-90">
+          {project.description}
+        </span>
         <span className="hidden md:block text-xs opacity-80 text-secondary">
           {project.status}
         </span>
         {projectTags && projectTags.length > 0 && (
-          <div className="hidden md:flex mt-1 flex-wrap gap-1 text-[10px]">
+          <div className="hidden md:flex mt-1 flex-wrap gap-1 text-[0.5rem]">
             {projectTags.map((tag) => (
               <span
                 key={tag}
