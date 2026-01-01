@@ -1,9 +1,9 @@
 'use client'
 
-import { useEffect, useMemo, useState, useCallback, useRef } from 'react'
-import dynamic from 'next/dynamic'
+import { useEffect, useMemo, useState, useRef } from 'react'
 import { ProjectCard } from '@/components/ProjectCard'
 import { ProjectCardSkeleton } from '@/components/Skeletons'
+import { FilterChips } from '@/components/FilterChips'
 
 const CARDS_PER_ROW = 5
 
@@ -26,15 +26,15 @@ export default function ProjectList() {
   const [loading, setLoading] = useState(true)
   const [selected, setSelected] = useState(null)
 
-  // search & filter state
+  // search state
   const [query, setQuery] = useState('')
-  const [searchFields, setSearchFields] = useState(['name']) // default search fields; easy to expand
-
-  const [filterField, setFilterField] = useState(null) // e.g. 'tags'
-  const [filterOptions, setFilterOptions] = useState([]) // selected options
-  const [filterPanelOpen, setFilterPanelOpen] = useState(false)
-
   const searchInputRef = useRef(null)
+
+  // filter state
+  const [statusFilter, setStatusFilter] = useState(null)
+  const [tagFilter, setTagFilter] = useState([])
+  const [tagsByProject, setTagsByProject] = useState({})
+  const [filterPanelOpen, setFilterPanelOpen] = useState(false)
 
   const getProjects = async () => {
     const resp = await fetch(`/api/projects`)
@@ -59,64 +59,94 @@ export default function ProjectList() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
 
-  // derive available filter fields from project data (simple heuristic)
-  const availableFilterFields = useMemo(() => {
-    if (!projectList || projectList.length === 0) return []
-    const commonFields = new Set()
-    projectList.forEach((p) =>
-      Object.keys(p || {}).forEach((k) => commonFields.add(k)),
-    )
-    // prefer tags, categories, status, etc. Keep only non-object primitive or array fields
-    return Array.from(commonFields).filter(
-      (f) => f !== 'id' && f !== 'name' && f !== 'description',
-    )
+  // derive status options from project data
+  const statusOptions = useMemo(() => {
+    const set = new Set()
+    projectList.forEach((p) => {
+      if (p?.status) set.add(p.status)
+    })
+    return Array.from(set).sort()
   }, [projectList])
 
-  const fieldOptionsMap = useMemo(() => {
-    const map = {}
-    availableFilterFields.forEach((field) => {
-      const opts = new Set()
-      projectList.forEach((p) => {
-        const val = p?.[field]
-        if (Array.isArray(val)) val.forEach((v) => opts.add(String(v)))
-        else if (val != null) opts.add(String(val))
-      })
-      map[field] = Array.from(opts).sort()
+  // derive tag options once tags have been fetched
+  const tagOptions = useMemo(() => {
+    const set = new Set()
+    Object.values(tagsByProject).forEach((tags) => {
+      ;(tags || []).forEach((t) => set.add(t))
     })
-    return map
-  }, [availableFilterFields, projectList])
+    return Array.from(set).sort()
+  }, [tagsByProject])
+
+  // load tags for all projects so we can filter by tag at the list level
+  useEffect(() => {
+    if (!projectList || projectList.length === 0) {
+      setTagsByProject({})
+      return
+    }
+
+    let cancelled = false
+
+    const loadAllTags = async () => {
+      try {
+        const results = await Promise.all(
+          projectList.map(async (project) => {
+            try {
+              const resp = await fetch('/api/projects/tags', {
+                method: 'POST',
+                body: String(project.id),
+              })
+              if (!resp.ok) return [project.id, []]
+              const tags = await resp.json()
+              return [project.id, Array.isArray(tags) ? tags : []]
+            } catch (e) {
+              return [project.id, []]
+            }
+          }),
+        )
+
+        if (cancelled) return
+
+        const map = {}
+        results.forEach(([id, tags]) => {
+          map[id] = tags
+        })
+        setTagsByProject(map)
+      } catch (e) {
+        if (!cancelled) setTagsByProject({})
+      }
+    }
+
+    loadAllTags()
+
+    return () => {
+      cancelled = true
+    }
+  }, [projectList])
 
   const rows = useMemo(() => {
     if (!projectList) return []
     return projectList.filter((project) => {
-      // search: check any of the searchFields
-      const matchesQuery = searchFields.some((field) => {
-        const value = project?.[field]
-        if (Array.isArray(value)) return value.some((v) => fuzzyMatch(query, v))
-        return fuzzyMatch(query, value)
-      })
+      // search: match against name, description, and status
+      const matchesQuery =
+        fuzzyMatch(query, project?.name) ||
+        fuzzyMatch(query, project?.description) ||
+        fuzzyMatch(query, project?.status)
 
       if (!matchesQuery) return false
 
-      // filters
-      if (filterField && filterOptions.length > 0) {
-        const val = project?.[filterField]
-        if (Array.isArray(val)) {
-          // match if any of project's values are in selected options
-          return val.some((v) => filterOptions.includes(String(v)))
-        }
-        if (val == null) return false
-        return filterOptions.includes(String(val))
+      // status filter (single select)
+      if (statusFilter && project?.status !== statusFilter) return false
+
+      // tag filter (multi-select)
+      if (tagFilter.length > 0) {
+        const projectTags = tagsByProject[project.id] || []
+        const hasMatch = projectTags.some((t) => tagFilter.includes(t))
+        if (!hasMatch) return false
       }
+
       return true
     })
-  }, [projectList, query, searchFields, filterField, filterOptions])
-
-  const toggleFilterOption = (opt) => {
-    setFilterOptions((prev) =>
-      prev.includes(opt) ? prev.filter((o) => o !== opt) : [...prev, opt],
-    )
-  }
+  }, [projectList, query, statusFilter, tagFilter, tagsByProject])
 
   return (
     <div className="w-full h-full flex flex-col gap-16 px-5 pt-16 pb-5 overflow-hidden">
@@ -167,8 +197,15 @@ export default function ProjectList() {
           {/* Filter button */}
           <button
             onClick={() => {
-              if (filterPanelOpen) setFilterOptions([])
-              setFilterPanelOpen((s) => !s)
+              setFilterPanelOpen((prev) => {
+                const next = !prev
+                if (!next) {
+                  // clearing filters when closing the panel
+                  setStatusFilter(null)
+                  setTagFilter([])
+                }
+                return next
+              })
             }}
             className={`h-full flex flex-none px-3 py-2 rounded-md border transition ${
               filterPanelOpen
@@ -198,51 +235,28 @@ export default function ProjectList() {
         </div>
       </div>
 
-      {/* Filter bar - horizontal list of available filters */}
-      {!loading && availableFilterFields.length > 0 && filterPanelOpen && (
-        <div className="transition-all duration-800 ease-in-out">
-          <div className="flex flex-wrap gap-4 items-start pb-4">
-            {availableFilterFields.map((field) => {
-              const isActive = filterField === field
-              const fieldOptions = fieldOptionsMap[field] || []
-
-              return (
-                <div key={field} className="flex flex-col gap-2">
-                  <div className="text-sm font-semibold capitalize">
-                    {field}
-                  </div>
-                  <form className="filter flex gap-1 h-1/4">
-                    <input
-                      onClick={() => setFilterOptions([])}
-                      className="btn btn-square min-h-[unset] h-full"
-                      type="reset"
-                      value="×"
-                    />
-                    {fieldOptions.map((opt) => (
-                      <input
-                        type="checkbox"
-                        key={opt}
-                        onClick={() => {
-                          if (filterField !== field) {
-                            setFilterField(field)
-                            setFilterOptions([opt])
-                          } else {
-                            toggleFilterOption(opt)
-                          }
-                        }}
-                        name="tags"
-                        className={`btn min-h-[unset] h-full px-3 py-1 rounded-full text-sm border transition ${
-                          isActive && filterOptions.includes(opt)
-                            ? 'bg-primary/40 border-primary'
-                            : 'bg-white/5 border-primary/20 hover:border-primary/40'
-                        }`}
-                        aria-label={opt}
-                      />
-                    ))}
-                  </form>
-                </div>
-              )
-            })}
+      {/* Filter bar - status (single select) and tags (multi select) */}
+      {!loading && filterPanelOpen && (
+        <div className="transition-all duration-300 ease-in-out">
+          <div className="flex flex-col gap-4 items-start pb-4">
+            <div className="w-full">
+              <FilterChips
+                label="Status"
+                options={statusOptions}
+                multiple={false}
+                selectedValues={statusFilter ? [statusFilter] : []}
+                onChange={(values) => setStatusFilter(values[0] ?? null)}
+              />
+            </div>
+            <div className="w-full">
+              <FilterChips
+                label="Tags"
+                options={tagOptions}
+                multiple
+                selectedValues={tagFilter}
+                onChange={setTagFilter}
+              />
+            </div>
           </div>
         </div>
       )}
