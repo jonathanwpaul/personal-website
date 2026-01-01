@@ -83,7 +83,7 @@ export function ThreeViewer({
       </Canvas>
 
       {hasAnims && (
-        <div className="absolute bottom-3 left-4 right-4 flex items-center gap-3 bg-background/70 backdrop-blur rounded-md px-3 py-2">
+        <div className="absolute bottom-3 left-4 right-4 flex items-center gap-3 bg-background/70 backdrop-blur-sm rounded-md px-3 py-2">
           <button
             type="button"
             onClick={() => setPlaying((p) => !p)}

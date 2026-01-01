@@ -92,12 +92,12 @@ export default function ProfileSection() {
       <div className="flex h-full flex-col md:grid md:grid-cols-3 md:gap-12 items-stretch">
         {/* Profile column */}
         <section className="min-h-[calc(100vh-30px)] md:min-h-0 md:col-span-1 flex flex-col items-center gap-12 p-6 md:justify-center snap-start">
-          <div className="flex-shrink-0 flex flex-col items-center gap-6">
+          <div className="shrink-0 flex flex-col items-center gap-6">
             {profilePictureUrl ? (
               <img className={profilePictureClass} src={profilePictureUrl} />
             ) : (
               <div
-                className={`${profilePictureClass} bg-gradient-to-br from-indigo-500 to-pink-500 flex items-center justify-center text-white text-2xl font-bold`}
+                className={`${profilePictureClass} bg-linear-to-br from-indigo-500 to-pink-500 flex items-center justify-center text-white text-2xl font-bold`}
               >
                 J
               </div>
