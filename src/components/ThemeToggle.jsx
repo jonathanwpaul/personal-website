@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useMemo, useState } from 'react'
+import { Sun, Moon } from 'lucide-react'
 
 function getSystemPrefersDark() {
   if (typeof window === 'undefined') return null
@@ -9,13 +10,26 @@ function getSystemPrefersDark() {
   )
 }
 
-function applyThemeAttr(theme /* 'light' | 'dark' | null */) {
+// Apply theme by toggling the `dark` class on <html> and optionally a data-theme attribute.
+// theme: 'light' | 'dark' | null (null = follow system preference)
+function applyThemeAttr(theme) {
+  if (typeof document === 'undefined') return
   const root = document.documentElement
   if (!root) return
-  if (theme === 'light' || theme === 'dark') {
-    root.setAttribute('data-theme', theme)
+
+  const prefersDark = getSystemPrefersDark()
+
+  if (theme === 'dark') {
+    root.classList.add('dark')
+    root.setAttribute('data-theme', 'dark')
+  } else if (theme === 'light') {
+    root.classList.remove('dark')
+    root.setAttribute('data-theme', 'light')
   } else {
-    root.removeAttribute('data-theme') // fall back to system
+    // Follow system preference when theme is null
+    root.setAttribute('data-theme', 'system')
+    if (prefersDark) root.classList.add('dark')
+    else root.classList.remove('dark')
   }
 }
 
@@ -67,30 +81,48 @@ export default function ThemeToggle({ className = '', fixed = false }) {
     setTheme(theme === 'dark' ? 'light' : 'dark')
   }
 
-  const baseClasses =
-    'inline-flex items-center gap-2 rounded-md bg-background/80 px-3 py-2 text-sm font-medium text-text'
   const posClasses = fixed ? 'fixed top-4 right-4 z-50' : ''
 
   // Avoid hydration mismatch by not rendering until mounted
   if (!mounted) return null
 
+  const isDark = effectiveTheme === 'dark'
+
   return (
     <button
       type="button"
       onClick={toggleTheme}
-      title={
-        effectiveTheme === 'dark'
-          ? 'Switch to light mode'
-          : 'Switch to dark mode'
-      }
-      className={`${posClasses} ${baseClasses} ${className}`}
+      title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+      className={`${posClasses} ${className}`}
     >
-      {effectiveTheme === 'dark' ? (
-        <span aria-hidden suppressHydrationWarning>🌙</span>
-      ) : (
-        <span aria-hidden suppressHydrationWarning>☀️</span>
-      )}
-      <span className="sr-only">Toggle theme</span>
+      <div className="inline-flex items-center">
+        {/* Track */}
+        <div className="relative flex items-center h-7 w-[3rem] rounded-full border border-border bg-background/80 shadow-sm transition-colors px-1">
+          {/* Thumb */}
+          <div
+            className={`pointer-events-none absolute h-5 w-5 rounded-full bg-primary/80 shadow-sm transition-transform ${
+              isDark ? 'translate-x-[1rem]' : 'translate-x-0'
+            }`}
+            aria-hidden
+          />
+          {/* Icons laid out with flex for even spacing */}
+          <div className="relative z-10 flex w-full items-center">
+            <Sun
+              className={`pointer-events-none h-3 w-3 flex-1 transition-colors ${
+                isDark ? 'text-muted-foreground' : 'text-primary'
+              }`}
+              aria-hidden
+            />
+            <Moon
+              className={`pointer-events-none h-3 w-3 flex-1 transition-colors ${
+                isDark ? 'text-primary' : 'text-muted-foreground'
+              }`}
+              aria-hidden
+            />
+          </div>
+        </div>
+        <span className="sr-only">Toggle theme</span>
+      </div>
     </button>
   )
 }

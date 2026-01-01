@@ -1,5 +1,4 @@
 'use server'
-import ThemeToggle from '@/components/ThemeToggle'
 import BreadcrumbNav from '@/components/BreadcrumbNav'
 import { buildRouteTree } from '@/helpers/route'
 

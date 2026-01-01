@@ -1,5 +1,5 @@
 'use client'
- 
+
 import { useEffect, useMemo, useState, useCallback, useRef } from 'react'
 import dynamic from 'next/dynamic'
 import { ProjectCard } from '@/components/ProjectCard'
@@ -119,7 +119,7 @@ export default function ProjectList() {
   }
 
   return (
-    <div className="h-full flex flex-col gap-16 px-5 pt-16 pb-5 overflow-hidden">
+    <div className="w-full h-full flex flex-col gap-16 px-5 pt-16 pb-5 overflow-hidden">
       <div className="grid grid-cols-1 lg:grid-cols-2 items-center justify-between gap-4">
         <div>
           <h1 className="font-bold text-lg text-primary">Projects</h1>

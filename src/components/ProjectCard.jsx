@@ -62,10 +62,10 @@ export const ProjectCard = ({ project, selected }) => {
     <Link
       href={`/projects/${project.name}`}
       className={
-        'min-h-[110px] md:min-h-[350px] flex flex-row md:flex-col items-center text-left p-4 content-end rounded-lg overflow-hidden border transition hover:border-primary'
+        'min-h-[110px] md:min-h-[350px] flex flex-row md:flex-col items-center text-left p-4 content-end rounded-lg overflow-hidden border border-border transition hover:border-primary bg-card'
       }
     >
-      <div className="mr-4 md:mr-0 mb-0 md:mb-5 rounded-lg shrink-0 w-24 h-24 md:w-[100%] md:h-auto flex md:flex-1 md:bg-card-foreground justify-center items-center text-primary overflow-hidden">
+      <div className="mr-4 md:mr-0 mb-0 md:mb-5 rounded-lg shrink-0 w-24 h-24 md:w-[100%] md:h-auto flex md:flex-1 bg-card justify-center items-center text-primary overflow-hidden">
         {thumbnailUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -77,7 +77,7 @@ export const ProjectCard = ({ project, selected }) => {
           <ThumbnailPlaceholder />
         )}
       </div>
-      <div className="flex flex-1 flex-col justify-center gap-1 md:gap-2 md:w-full items-start bg-background/80 backdrop-blur-sm">
+      <div className="flex flex-1 flex-col justify-center gap-1 md:gap-2 md:w-full items-start backdrop-blur-sm">
         <span className="text-md font-semibold">{project.name}</span>
         <span className="text-sm opacity-90">{project.description}</span>
         <span className="hidden md:block text-xs opacity-80 text-secondary">
