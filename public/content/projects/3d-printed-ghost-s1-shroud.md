@@ -11,7 +11,7 @@ My poor Ghost S1 was overheating, and I needed some extra fans. The factory top 
 
 ## Notes
 - I flipped my top plate around so the lips were sticking up, which line up with these tabs:
-	- ![[ghost-s1-tab.png]]
+	- ![[images/ghost-s1-tab.png]]
 	- This helps avoid flexing in the part
 - if you don't want to use magnets, delete the feature called 'magnetmounts' in the .f3d file
 ### Parameters
