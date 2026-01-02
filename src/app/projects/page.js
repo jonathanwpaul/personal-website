@@ -238,7 +238,7 @@ export default function ProjectList() {
       {/* Filter bar - status (single select) and tags (multi select) */}
       {!loading && filterPanelOpen && (
         <div className="transition-all duration-300 ease-in-out">
-          <div className="gap-2 items-start justify-start pb-4">
+          <div className="flex flex-row flex-wrap gap-4 items-start justify-start pb-4">
             <div className="">
               <FilterChips
                 label="Status"

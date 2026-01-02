@@ -34,13 +34,13 @@ export function FilterChips({
           {label}
         </div>
       )}
-      <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
+      <div className="flex flex-col gap-2 overflow-x-auto pb-1 -mx-1 px-1 items-start">
         {options.map((opt) => {
           const isSelected = selectedValues.includes(opt)
           return (
             <label
               key={opt}
-              className={`shrink-0 inline-flex items-center rounded-full border px-3 py-1 text-xs md:text-sm cursor-pointer transition whitespace-nowrap ${
+              className={`inline-flex items-center rounded-full border px-3 py-1 text-xs md:text-sm cursor-pointer transition whitespace-nowrap ${
                 isSelected
                   ? 'bg-primary text-background border-primary'
                   : 'bg-background/80 text-foreground border-border hover:border-primary/60'
