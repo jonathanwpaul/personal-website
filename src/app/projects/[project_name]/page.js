@@ -129,7 +129,7 @@ export default function Details(props) {
           <div className="h-full flex flex-col gap-8 md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,3fr)]">
             {/* Left column: thumbnail, title, description, links */}
             <section className="flex flex-col gap-4 md:pr-4">
-              <div className="w-full rounded-lg border border-border bg-card flex items-center justify-center overflow-hidden">
+              <div className="w-full rounded-lg border bg-card flex items-center justify-center overflow-hidden">
                 {thumbnailUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img

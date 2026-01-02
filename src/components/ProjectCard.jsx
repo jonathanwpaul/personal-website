@@ -62,7 +62,7 @@ export const ProjectCard = ({ project, selected }) => {
     <Link
       href={`/projects/${project.name}`}
       className={
-        'min-h-[110px] md:min-h-[350px] flex flex-row md:flex-col items-center text-left p-4 content-end rounded-lg overflow-hidden border border-border transition hover:border-primary bg-card'
+        'min-h-[110px] md:min-h-[350px] flex flex-row md:flex-col items-center text-left p-4 content-end rounded-lg overflow-hidden border transition hover:border-primary bg-card'
       }
     >
       <div className="mr-4 md:mr-0 mb-0 md:mb-5 rounded-lg shrink-0 w-20 max-h-full h-20 md:w-[100%] md:h-auto flex md:flex-1 bg-card justify-center items-center text-primary overflow-hidden">

@@ -2,10 +2,7 @@ import React from 'react'
 
 export function ProjectCardSkeleton({ count = 6 }) {
   return Array.from({ length: count }).map((_, i) => (
-    <div
-      key={i}
-      className="animate-pulse rounded-lg border border-gray-200 bg-white/5 p-4"
-    >
+    <div key={i} className="animate-pulse rounded-lg border bg-white/5 p-4">
       <div className="h-44 w-full rounded-md bg-gray-300/70 dark:bg-gray-600 mb-4" />
       <div className="h-4 bg-gray-300/70 dark:bg-gray-600 rounded w-3/4 mb-2" />
       <div className="h-3 bg-gray-300/60 dark:bg-gray-600 rounded w-1/2" />
