@@ -120,10 +120,10 @@ export default function ProfileSection() {
               </div>
             </div>
           </div>
-          <div className="flex text-secondary">
+          <div className="flex shadow-lg">
             <Link
               href="/projects"
-              className="h-full flex flex-none px-3 py-2 rounded-md border transition border-secondary text-secondary items-center hover:bg-secondary hover:text-white"
+              className="h-full flex flex-none px-3 py-2 rounded-md border transition border-secondary items-center bg-secondary text-white md:bg-transparent md:text-secondary md:hover:bg-secondary md:hover:text-white"
             >
               View my projects
             </Link>
