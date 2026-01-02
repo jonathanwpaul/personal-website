@@ -149,8 +149,8 @@ export default function ProjectList() {
   }, [projectList, query, statusFilter, tagFilter, tagsByProject])
 
   return (
-    <div className="w-full h-full flex flex-col gap-16 px-5 pt-16 pb-5 overflow-hidden">
-      <div className="grid grid-cols-1 lg:grid-cols-2 items-center justify-between gap-4">
+    <div className="w-full h-full flex flex-col gap-2 px-5 pt-16 pb-5 overflow-hidden">
+      <div className="grid grid-cols-1 lg:grid-cols-2 items-center justify-between gap-4 mb-12">
         <div>
           <h1 className="font-bold text-lg text-primary">Projects</h1>
           <h2 className="font-light text-xs">
@@ -238,8 +238,8 @@ export default function ProjectList() {
       {/* Filter bar - status (single select) and tags (multi select) */}
       {!loading && filterPanelOpen && (
         <div className="transition-all duration-300 ease-in-out">
-          <div className="flex flex-col gap-4 items-start pb-4">
-            <div className="w-full">
+          <div className="gap-2 items-start justify-start pb-4">
+            <div className="">
               <FilterChips
                 label="Status"
                 options={statusOptions}
@@ -248,7 +248,7 @@ export default function ProjectList() {
                 onChange={(values) => setStatusFilter(values[0] ?? null)}
               />
             </div>
-            <div className="w-full">
+            <div className="">
               <FilterChips
                 label="Tags"
                 options={tagOptions}
