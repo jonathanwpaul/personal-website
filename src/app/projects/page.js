@@ -150,7 +150,7 @@ export default function ProjectList() {
 
   return (
     <div className="w-full h-full flex flex-col gap-2 px-5 pt-16 pb-5 overflow-hidden">
-      <div className="grid grid-cols-1 lg:grid-cols-2 items-center justify-between gap-4 mb-12">
+      <div className="grid grid-cols-1 lg:grid-cols-2 items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="font-bold text-lg text-primary">Projects</h1>
           <h2 className="font-light text-xs">
@@ -262,7 +262,7 @@ export default function ProjectList() {
       )}
 
       <div
-        className={`overflow-y-auto grid grid-cols-1 md:grid-cols-4 lg:grid-cols-${CARDS_PER_ROW} gap-3 p-6 border border-primary/20 rounded-lg shadow-inner bg-background/80`}
+        className={`overflow-y-auto grid grid-cols-1 md:grid-cols-4 lg:grid-cols-${CARDS_PER_ROW} gap-2 md:gap-3 rounded-lg background/80`}
       >
         {loading && <ProjectCardSkeleton count={CARDS_PER_ROW * 2} />}
         {!loading &&
