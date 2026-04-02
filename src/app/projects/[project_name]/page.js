@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState, use } from 'react'
-import { EmbedCarousel } from './carousel'
 import { ProjectPageSkeleton } from '@/components/Skeletons'
 import { ThreeViewer } from '@/components/ThreeViewer'
 import { ThumbnailPlaceholder } from '@/components/ThumbnailPlaceholder'
