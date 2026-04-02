@@ -58,7 +58,7 @@ export function ThreeViewer({
 
   return (
     <div
-      className={`relative w-full h-full min-h-[40vh] rounded-lg p-4 ${className}`}
+      className={`relative w-full h-[50vh] rounded-lg p-4 ${className}`}
       style={style}
     >
       <Canvas camera={{ fov }} shadows gl={{ antialias: true, alpha: true }}>
