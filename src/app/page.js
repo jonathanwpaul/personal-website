@@ -88,10 +88,10 @@ export default function ProfileSection() {
   if (!user) return
 
   return (
-    <div className="max-w-5xl h-full mx-auto px-6 py-8 overflow-y-auto snap-y snap-mandatory md:snap-none">
+    <div className="max-w-5xl h-full mx-auto px-6 py-8 overflow-y-auto snap-y snap-proximity md:snap-none">
       <div className="flex h-full flex-col md:grid md:grid-cols-3 md:gap-12 items-stretch">
         {/* Profile column */}
-        <section className="min-h-[calc(100vh-30px)] md:min-h-0 md:col-span-1 flex flex-col items-center gap-12 p-6 md:justify-center snap-start">
+        <section className="min-h-[calc(100vh-30px)] md:min-h-0 md:col-span-1 flex flex-col items-center gap-12 p-6 md:justify-center">
           <div className="shrink-0 flex flex-col items-center gap-6">
             {profilePictureUrl ? (
               <img className={profilePictureClass} src={profilePictureUrl} />
@@ -131,8 +131,8 @@ export default function ProfileSection() {
         </section>
 
         {/* About column */}
-        <section className="mt-12 md:mt-0 flex flex-col gap-4 md:col-span-2 md:justify-center md:px-8 min-h-[calc(100vh-30px)] md:min-h-0 snap-start">
-          <h3 className="text-3xl font-bold text-center md:text-left">About</h3>
+        <section className="mt-12 md:mt-0 flex flex-col gap-4 md:col-span-2 md:justify-center md:px-8 min-h-[calc(100vh-30px)] md:min-h-0">
+          <h3 className="text-3xl font-bold text-center md:text-left snap-start">About</h3>
           <div
             className="[&>ul]:list-disc [&>ul]:m-4 [&>ul]:list-inside [&>ul]:pl-6 [&>ul>li::marker]:text-primary"
             dangerouslySetInnerHTML={{ __html: user.about }}
