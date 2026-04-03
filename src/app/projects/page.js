@@ -262,7 +262,7 @@ export default function ProjectList() {
       )}
 
       <div
-        className={`overflow-y-auto grid grid-cols-1 md:grid-cols-4 lg:grid-cols-${CARDS_PER_ROW} gap-2 md:gap-3 rounded-lg background/80`}
+        className={`flex-1 min-h-0 overflow-y-auto grid content-start grid-cols-1 md:grid-cols-4 lg:grid-cols-${CARDS_PER_ROW} gap-2 md:gap-0.5 rounded-lg background/80`}
       >
         {loading && <ProjectCardSkeleton count={CARDS_PER_ROW * 2} />}
         {!loading &&
