@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jonathan Paul – Resume</title>
+<style>
+  /* ── RESET & BASE ── */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Garamond', 'Georgia', serif;
+    font-size: 10pt;
+    color: #1a1a1a;
+    background: #fff;
+    padding: 0.35in 0.5in;
+    max-width: 8.5in;
+    margin: 0 auto;
+    line-height: 1.3;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+  a:hover { text-decoration: underline; }
+
+  /* ── HEADER ── */
+  .header-flex {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1rem;
+    align-items: baseline;
+    margin-bottom: 6px;
+  }
+
+  .resume-name {
+    font-size: 22pt;
+    font-weight: bold;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+  }
+
+  .resume-contact {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    font-size: 9pt;
+    color: #444;
+  }
+
+  .resume-contact a { color: #444; }
+
+  .contact-sep {
+    display: inline-block;
+    width: 1px;
+    height: 0.85em;
+    background: #bbb;
+    margin: 0 10px;
+    vertical-align: middle;
+  }
+
+    /* ── SECTION HEADER ── */
+  .section-title {
+    font-size: 9pt;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.13em;
+    border-bottom: 1.5px solid #aaaaaa;
+    padding-bottom: 2px;
+    margin-top: 8px;
+    margin-bottom: 4px;
+  }
+
+  /* ── EDUCATION ── */
+  .education-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0 12px;
+    align-items: baseline;
+    font-size: 10pt;
+  }
+
+  .edu-date {
+    white-space: nowrap;
+    font-style: italic;
+    color: #555;
+    font-size: 9.5pt;
+  }
+
+  /* ── EXPERIENCE ── */
+  .exp-header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    align-items: baseline;
+    margin-bottom: 3px;
+  }
+
+  .exp-entry {
+    margin-bottom: 5px;
+  }
+
+  .exp-title {
+    font-weight: bold;
+    font-size: 10.5pt;
+  }
+
+  .exp-date {
+    white-space: nowrap;
+    font-style: italic;
+    font-size: 9.5pt;
+    text-align: right;
+  }
+
+  .exp-description {
+    margin-bottom: 3px;
+  }
+
+  .exp-bullets {
+    margin: 2px 0 0 16px;
+    padding: 0;
+  }
+
+
+  /* ── SKILLS ── */
+  .skills-section {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .skills-row {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 0 14px;
+    align-items: start;
+  }
+
+  .skills-category {
+    color: #333;
+    font-size: 10pt;
+    padding-top: 2px;
+  }
+
+  .skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .skill-chip {
+    display: inline-block;
+    border: 1px solid hsl(175.3398 77.4436% 26.0784%);
+    color: hsl(175.3398 77.4436% 26.0784%);
+    border-radius: 999px;
+    padding: 1px 8px;
+    font-size: 9pt;
+    line-height: 1.5;
+    white-space: nowrap;
+  }
+
+  /* ── MOBILE ── */
+  @media (max-width: 600px) {
+    body { padding: 16px; }
+    .header-flex { grid-template-columns: 1fr; gap: 4px; }
+    .resume-contact { flex-direction: column; align-items: flex-start; gap: 2px; }
+    .contact-sep { display: none; }
+    .exp-header { grid-template-columns: 1fr; gap: 2px; }
+    .exp-date { text-align: left; }
+    .education-row { grid-template-columns: 1fr; gap: 2px; }
+    .skills-row { grid-template-columns: 1fr; gap: 4px; }
+  }
+
+  /* ── PRINT ── */
+  @media print {
+    body { padding: 0.3in 0.45in; }
+    a { color: inherit; text-decoration: none; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- ══ HEADER ══ -->
+  <div class="header-flex">
+  <div class="resume-name">Jonathan Paul</div>
+  <div class="resume-contact">
+    <a href="mailto:paulwjonathan@gmail.com">paulwjonathan@gmail.com</a>
+    <span class="contact-sep"></span>
+    <a href="https://linkedin.com/in/jonathanwpaul">linkedin.com/in/jonathanwpaul</a>
+    <span class="contact-sep"></span>
+    <a href="https://jonathanpaul.dev">jonathanpaul.dev</a>
+  </div>
+  </div>
+
+  <!-- ══ EDUCATION ══ -->
+  <div class="section-title">Education</div>
+  <div class="education-row">
+    <div class="edu-degree">
+      <strong>Bachelor of Science, Mechanical Engineering</strong> (Minor, Computer Science) - Georgia Institute of Technology
+    </div>
+    <div class="edu-date">Class of 2021</div>
+  </div>
+
+  <!-- ══ EXPERIENCE ══ -->
+  <div class="section-title">Experience</div>
+  <div class="experience-list">
+
+    <div class="exp-header">
+      <div class="exp-title">Software Engineer, Deloitte Consulting</div>
+      <div class="exp-date">Aug 2021 - Present</div>
+    </div>
+
+    <div class="exp-entry">
+      <div class="exp-description">Azure implementation for international dog importation form</div>
+      <ul class="exp-bullets">
+        <li>Created MVP in 2 weeks</li>
+        <li>Critical features: Form UI, mobile-first design, submission, validation, emailing service, automated pdf generation</li>
+        <li>AI-assisted unit test generation (Jest, Playwright), hooked into git actions, automated load testing</li>
+        <li>Designed and stood up Azure architecture: containerized web apps, Azure monitoring (OpenTelemetry) w/ custom metrics dashboard, Azure load testing</li>
+        <li>CI/CD pipeline via GitHub workflows</li>
+        <li>Mimicked existing application for seamless migration from legacy software, data-scraping and migration to Postgres DB</li>
+        <li>Managed UAT feedback and changing requirements during project duration</li>
+      </ul>
+    </div>
+
+    <div class="exp-entry">
+      <div class="exp-description">Web development for disease prioritization app</div>
+      <ul class="exp-bullets">
+        <li>300+ global users</li>
+        <li>Implemented 50+ bug fixes and several critical features – custom pdf/docx export generation, automated notification service, data model changes</li>
+        <li>Set up new deployment environment, managed</li>
+      </ul>
+    </div>
+
+    <div class="exp-entry">
+      <div class="exp-title">CoreLabs: Shipping, Ordering, Inventory Management</div>
+      <div class="exp-description">Managing transition to O&amp;M from prior development contract</div>
+      <ul class="exp-bullets">
+        <li>Work in diverse ecosystem – Dynamics 365, .NET, Azure Service Bus, Azure Logic Apps</li>
+        <li>Handled requests for new major features, critical obstacles to adoption, bug fixes</li>
+        <li>Managed data migration, backups, demos</li>
+      </ul>
+    </div>
+
+    <div class="exp-entry">
+      <div class="exp-title">ServiceNow REST API Integration and Visualization</div>
+      <div class="exp-description">Creation of data pipeline from ServiceNow to Power BI for career pathing and development data</div>
+      <ul class="exp-bullets">
+        <li>Mapped entity relations for existing data model in ServiceNow</li>
+        <li>Built REST API endpoint on ServiceNow to allow data model import</li>
+        <li>Established dataflow from REST API to Power BI</li>
+      </ul>
+    </div>
+
+    <div class="exp-entry">
+      <div class="exp-title">Financial Management</div>
+      <ul class="exp-bullets">
+        <li>Created staffing management database application to address migration and hiring of employees for COVID-related efforts</li>
+        <li>Transformed financial management processes through automation of approval, report generation, and analysis</li>
+        <li>Performed ad-hoc analyses for budgeting, funding sources, and future projections</li>
+      </ul>
+    </div>
+
+    <div class="exp-entry">
+      <div class="exp-title">IT &amp; Data Governance</div>
+      <ul class="exp-bullets">
+        <li>Established approval process for IT &amp; Data investments</li>
+        <li>Developed custom application in Power Platform for approval of investments, integrating workflows and email notifications</li>
+      </ul>
+    </div>
+
+    <div class="exp-entry">
+      <div class="exp-title">Resource Hub Application Development</div>
+      <div class="exp-description">Updates for Resource Hub, a web application which hosts DCPC's cancer-related resources</div>
+      <ul class="exp-bullets">
+        <li>Integrated resources hosted/managed on a Salesforce platform via API, automatically syncing updates from Salesforce to Resource Hub</li>
+        <li>Implemented single sign-on (SSO) SAML authentication with Salesforce as an identity provider</li>
+        <li>Modernized application UI while maintaining accessibility standards</li>
+        <li>Automated migration of existing data:
+          <ul>
+            <li>Python script connected to Salesforce API</li>
+            <li>NLP categorization</li>
+          </ul>
+        </li>
+        <li>Created resource request page, allowing users to request managers to add/update resources</li>
+        <li>Maintain cloud development architecture on Azure Cloud and Red Hat ECPaaS</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- ══ SKILLS ══ -->
+  <div class="section-title">Skills</div>
+  <div class="skills-section">
+    <div class="skills-row">
+      <div class="skills-category">Platforms</div>
+      <div class="skills-list">
+        <span class="skill-chip">Azure Cloud</span>
+        <span class="skill-chip">Azure DevOps</span>
+        <span class="skill-chip">GitHub</span>
+        <span class="skill-chip">Redhat Openshift ECPaaS</span>
+        <span class="skill-chip">Microsoft Dynamics</span>
+        <span class="skill-chip">ServiceNow</span>
+        <span class="skill-chip">Salesforce</span>
+        <span class="skill-chip">PostgreSQL</span>
+        <span class="skill-chip">SQL Server</span>
+      </div>
+    </div>
+    <div class="skills-row">
+      <div class="skills-category">Programming</div>
+      <div class="skills-list">
+
+        <span class="skill-chip">React.js</span>
+        <span class="skill-chip">Next.js</span>
+        <span class="skill-chip">TypeScript/JavaScript</span>
+        <span class="skill-chip">Python</span>
+        <span class="skill-chip">SQL</span>
+        <span class="skill-chip">C/C++</span>
+        <span class="skill-chip">Bash</span>
+        <span class="skill-chip">Java</span>
+      </div>
+    </div>
+    <div class="skills-row">
+      <div class="skills-category">Tools</div>
+      <div class="skills-list">
+        <span class="skill-chip">Linux</span>
+        <span class="skill-chip">Docker</span>
+        <span class="skill-chip">Git</span>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
