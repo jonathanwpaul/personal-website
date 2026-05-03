@@ -1,13 +1,47 @@
 'use client'
 
 import { useEffect, useState, use } from 'react'
-import { EmbedCarousel } from './carousel'
 import { ProjectPageSkeleton } from '@/components/Skeletons'
 import { ThreeViewer } from '@/components/ThreeViewer'
 import { ThumbnailPlaceholder } from '@/components/ThumbnailPlaceholder'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { cn } from '@/lib/utils'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { oneDark, oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism'
+
+function useIsDark() {
+  const [isDark, setIsDark] = useState(false)
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-color-scheme: dark)')
+    setIsDark(mq.matches)
+    const handler = (e) => setIsDark(e.matches)
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [])
+
+  return isDark
+}
+
+function CodeBlock({ language, children }) {
+  const isDark = useIsDark()
+  return (
+    <SyntaxHighlighter
+      language={language}
+      style={isDark ? oneDark : oneLight}
+      PreTag="div"
+      customStyle={{
+        borderRadius: '0.5rem',
+        fontSize: '0.78rem',
+        margin: '0.75rem 0',
+        padding: '1rem',
+      }}
+    >
+      {children}
+    </SyntaxHighlighter>
+  )
+}
 
 export default function Details(props) {
   const params = use(props.params)
@@ -335,6 +369,24 @@ export default function Details(props) {
                               {...props}
                             />
                           ),
+                          code({ children, className, node, ...rest }) {
+                            const match = /language-(\w+)/.exec(className || '')
+                            if (match) {
+                              return (
+                                <CodeBlock language={match[1]}>
+                                  {String(children).replace(/\n$/, '')}
+                                </CodeBlock>
+                              )
+                            }
+                            return (
+                              <code
+                                className="bg-muted px-1.5 py-0.5 rounded text-[0.8em] font-mono text-foreground"
+                                {...rest}
+                              >
+                                {children}
+                              </code>
+                            )
+                          },
                         }}
                       >
                         {summary}

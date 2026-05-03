@@ -61,36 +61,64 @@ export const ProjectCard = ({ project, selected }) => {
   return (
     <Link
       href={`/projects/${project.name}`}
-      className={
-        'min-h-[110px] md:min-h-[350px] flex flex-row md:flex-col items-center text-left p-4 content-end rounded-lg overflow-hidden border transition hover:border-primary bg-card'
-      }
+      className={`group relative
+        flex flex-row items-center gap-3 p-3 min-h-[110px]
+        md:block md:p-0 md:min-h-[280px]
+        overflow-hidden rounded-lg md:rounded-none border transition-colors duration-200 bg-card
+        ${selected ? 'border-primary' : 'border-border hover:border-primary'}`}
     >
-      <div className="mr-4 md:mr-0 mb-0 md:mb-5 rounded-lg shrink-0 w-20 max-h-full h-20 md:w-[100%] md:h-auto flex md:flex-1 bg-card justify-center items-center text-primary overflow-hidden">
+      {/* Forces aspect ratio on desktop via padding-bottom trick (pb-[160%] = ~4:5 portrait) */}
+      <div className="hidden md:block w-full pb-[160%]" aria-hidden="true" />
+
+      {/* Thumbnail: small fixed square on mobile, fills card on desktop */}
+      <div className="shrink-0 w-20 h-20 rounded-md overflow-hidden flex items-center justify-center text-primary bg-card
+                      md:absolute md:inset-0 md:w-full md:h-full md:rounded-none">
         {thumbnailUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={thumbnailUrl}
             alt={`${project.name} thumbnail`}
-            className="h-full w-full object-cover"
+            className="w-full h-full object-cover"
           />
         ) : (
           <ThumbnailPlaceholder />
         )}
       </div>
-      <div className="flex flex-1 flex-col justify-center gap-1 md:gap-2 md:w-full items-start backdrop-blur-sm">
-        <span className="text-sm md:text-md font-semibold">{project.name}</span>
-        <span className="text-xs md:text-sm opacity-90">
-          {project.description}
+
+      {/* Mobile: inline text beside thumbnail */}
+      <div className="flex flex-col flex-1 gap-1 md:hidden">
+        <span className="text-sm font-semibold">{project.name}</span>
+        <span className="text-xs opacity-90">{project.description}</span>
+      </div>
+
+      {/* Desktop: frosted overlay — 1/3 height at rest, full on hover */}
+      <div className="hidden md:flex flex-col justify-end gap-1.5 p-3
+                      absolute bottom-0 left-0 right-0 overflow-hidden
+                      max-h-[33%] group-hover:max-h-[500px]
+                      transition-[max-height] duration-300 ease-in-out
+                      backdrop-blur-md bg-black/30">
+        {/* Always visible: name */}
+        <span className="text-sm font-semibold text-white leading-tight truncate shrink-0">
+          {project.name}
         </span>
-        <span className="hidden md:block text-xs opacity-80 text-secondary">
-          {project.status}
-        </span>
-        {projectTags && projectTags.length > 0 && (
-          <div className="hidden md:flex mt-1 flex-wrap gap-1 text-[0.5rem]">
+        {/* Hover-only: description + status */}
+        <div className="h-0 overflow-hidden group-hover:h-auto flex flex-col gap-1.5 shrink-0">
+          <p className="text-xs text-white/90 leading-relaxed line-clamp-[8]
+                        opacity-0 group-hover:opacity-100 transition-opacity duration-200 delay-150">
+            {project.description}
+          </p>
+          <span className="text-[0.65rem] text-white/60 capitalize
+                           opacity-0 group-hover:opacity-100 transition-opacity duration-200 delay-150">
+            {project.status}
+          </span>
+        </div>
+        {/* Always visible: tags */}
+        {projectTags.length > 0 && (
+          <div className="flex flex-wrap gap-1 shrink-0">
             {projectTags.map((tag) => (
               <span
                 key={tag}
-                className="px-2 py-0.5 rounded-full border border-primary/30 bg-background/80 text-primary/80"
+                className="text-[0.5rem] px-1.5 py-0.5 rounded-full border border-white/30 bg-white/10 text-white/80"
               >
                 {tag}
               </span>

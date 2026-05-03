@@ -50,15 +50,23 @@ export function ThreeViewer({
   style,
   className = '',
 }) {
-  const [playing, setPlaying] = useState(autoPlay)
-  const currentTime = useRef()
+  // Separate display state (for button label) from the ref used to control the mixer.
+  // Using a ref means toggling play/pause does NOT re-render Canvas children,
+  // which prevents Bounds from re-fitting the camera on each toggle.
+  const [displayPlaying, setDisplayPlaying] = useState(autoPlay)
+  const playingRef = useRef(autoPlay)
+
+  const togglePlay = useCallback(() => {
+    playingRef.current = !playingRef.current
+    setDisplayPlaying(playingRef.current)
+  }, [])
 
   //TODO: convert to state
   const hasAnims = true
 
   return (
     <div
-      className={`relative w-full h-full min-h-[40vh] rounded-lg p-4 ${className}`}
+      className={`relative w-full h-[50vh] rounded-lg p-4 ${className}`}
       style={style}
     >
       <Canvas camera={{ fov }} shadows gl={{ antialias: true, alpha: true }}>
@@ -70,8 +78,7 @@ export function ThreeViewer({
           {modelUrl ? (
             <Model
               modelUrl={modelUrl}
-              playing={playing}
-              setPlaying={setPlaying}
+              playingRef={playingRef}
               orbitTarget={orbitTarget}
               minDistance={minDistance}
               maxDistance={maxDistance}
@@ -86,10 +93,10 @@ export function ThreeViewer({
         <div className="absolute bottom-3 left-4 right-4 flex items-center gap-3 bg-background/70 backdrop-blur-sm rounded-md px-3 py-2">
           <button
             type="button"
-            onClick={() => setPlaying((p) => !p)}
+            onClick={togglePlay}
             className="px-2 py-1 text-sm rounded border border-primary/40 hover:border-primary/60"
           >
-            {playing ? 'Pause' : 'Play'}
+            {displayPlaying ? 'Pause' : 'Play'}
           </button>
         </div>
       )}
@@ -99,7 +106,7 @@ export function ThreeViewer({
 
 function Model({
   modelUrl,
-  playing,
+  playingRef,
   orbitTarget,
   minDistance,
   maxDistance,
@@ -124,10 +131,13 @@ function Model({
     }
   }, [])
 
-  // handle play/pause (button press)
-  useEffect(() => {
-    mixer.clipAction(clips[0]).paused = !playing
-  }, [playing])
+  // Sync mixer pause state from ref each frame — avoids re-rendering this
+  // component (and Bounds) when the user toggles play/pause.
+  useFrame(() => {
+    if (clips && clips.length > 0) {
+      mixer.clipAction(clips[0]).paused = !playingRef.current
+    }
+  })
 
   // Compute bounds and center
   const bounds = useMemo(() => {
