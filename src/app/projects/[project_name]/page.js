@@ -8,7 +8,10 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { cn } from '@/lib/utils'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import { oneDark, oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism'
+import {
+  oneDark,
+  oneLight,
+} from 'react-syntax-highlighter/dist/esm/styles/prism'
 
 function useIsDark() {
   const [isDark, setIsDark] = useState(false)
@@ -140,14 +143,15 @@ export default function Details(props) {
 
   useEffect(() => {
     if (!params?.project_name) return
-    fetchProject(params.project_name)
-    fetchSummary(params.project_name)
+    Promise.all([
+      fetchProject(params.project_name),
+      fetchSummary(params.project_name),
+    ])
   }, [params?.project_name])
 
   useEffect(() => {
     if (!project || !project.id) return
-    fetchProjectFiles(project.id)
-    fetchThumbnail(project.id)
+    Promise.all([fetchProjectFiles(project.id), fetchThumbnail(project.id)])
   }, [project])
 
   if (!project) return
@@ -427,9 +431,6 @@ export default function Details(props) {
                     <h2 className="text-2xl font-bold mb-4">{`Video${
                       project_videos.length > 1 ? 's' : ''
                     }`}</h2>
-                    <EmbedCarousel
-                      list={project_videos.map((e) => e.video_embed_link)}
-                    />
                   </section>
                 )}
               </div>

@@ -11,13 +11,14 @@ function fuzzyMatch(query = '', text = '') {
   if (!query) return true
   const q = query.toLowerCase()
   const t = String(text || '').toLowerCase()
-  // quick substring match
+
   if (t.includes(q)) return true
-  // subsequence fuzzy match: all chars in q appear in order in t
+
   let qi = 0
   for (let i = 0; i < t.length && qi < q.length; i++) {
     if (t[i] === q[qi]) qi++
   }
+
   return qi === q.length
 }
 
@@ -47,7 +48,6 @@ export default function ProjectList() {
     getProjects().then(setProjectList)
   }, [])
 
-  // Bind Ctrl+K (or Cmd+K on Mac) to focus search input
   useEffect(() => {
     const handleKeyDown = (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
@@ -88,29 +88,29 @@ export default function ProjectList() {
 
     const loadAllTags = async () => {
       try {
-        const results = await Promise.all(
-          projectList.map(async (project) => {
-            try {
-              const resp = await fetch('/api/projects/tags', {
-                method: 'POST',
-                body: String(project.id),
-              })
-              if (!resp.ok) return [project.id, []]
-              const tags = await resp.json()
-              return [project.id, Array.isArray(tags) ? tags : []]
-            } catch (e) {
-              return [project.id, []]
-            }
-          }),
-        )
+        const projectIds = projectList.map((p) => p.id)
+        const resp = await fetch('/api/projects/tags', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(projectIds),
+        })
 
         if (cancelled) return
 
-        const map = {}
-        results.forEach(([id, tags]) => {
-          map[id] = tags
-        })
-        setTagsByProject(map)
+        if (!resp.ok) {
+          setTagsByProject({})
+          return
+        }
+
+        const tagsByProject = await resp.json()
+        if (
+          typeof tagsByProject === 'object' &&
+          !Array.isArray(tagsByProject)
+        ) {
+          setTagsByProject(tagsByProject)
+        } else {
+          setTagsByProject({})
+        }
       } catch (e) {
         if (!cancelled) setTagsByProject({})
       }
