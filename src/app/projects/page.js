@@ -35,6 +35,7 @@ export default function ProjectList() {
   const [statusFilter, setStatusFilter] = useState(null)
   const [tagFilter, setTagFilter] = useState([])
   const [tagsByProject, setTagsByProject] = useState({})
+  const [thumbnailsByProject, setThumbnailsByProject] = useState({})
   const [filterPanelOpen, setFilterPanelOpen] = useState(false)
 
   const getProjects = async () => {
@@ -77,46 +78,65 @@ export default function ProjectList() {
     return Array.from(set).sort()
   }, [tagsByProject])
 
-  // load tags for all projects so we can filter by tag at the list level
+  // load tags and thumbnails for all projects in parallel
   useEffect(() => {
     if (!projectList || projectList.length === 0) {
       setTagsByProject({})
+      setThumbnailsByProject({})
       return
     }
 
     let cancelled = false
 
-    const loadAllTags = async () => {
+    const loadAllMetadata = async () => {
       try {
         const projectIds = projectList.map((p) => p.id)
-        const resp = await fetch('/api/projects/tags', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(projectIds),
-        })
+
+        const [tagsResp, thumbnailsResp] = await Promise.all([
+          fetch('/api/projects/tags', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(projectIds),
+          }),
+          fetch('/api/projects/thumbnail', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(projectIds),
+          }),
+        ])
 
         if (cancelled) return
 
-        if (!resp.ok) {
-          setTagsByProject({})
-          return
+        // Process tags
+        if (tagsResp.ok) {
+          const tagsByProject = await tagsResp.json()
+          if (
+            typeof tagsByProject === 'object' &&
+            !Array.isArray(tagsByProject)
+          ) {
+            setTagsByProject(tagsByProject)
+          }
         }
 
-        const tagsByProject = await resp.json()
-        if (
-          typeof tagsByProject === 'object' &&
-          !Array.isArray(tagsByProject)
-        ) {
-          setTagsByProject(tagsByProject)
-        } else {
-          setTagsByProject({})
+        // Process thumbnails
+        if (thumbnailsResp.ok) {
+          const thumbnailsByProject = await thumbnailsResp.json()
+          if (
+            typeof thumbnailsByProject === 'object' &&
+            !Array.isArray(thumbnailsByProject)
+          ) {
+            setThumbnailsByProject(thumbnailsByProject)
+          }
         }
       } catch (e) {
-        if (!cancelled) setTagsByProject({})
+        if (!cancelled) {
+          setTagsByProject({})
+          setThumbnailsByProject({})
+        }
       }
     }
 
-    loadAllTags()
+    loadAllMetadata()
 
     return () => {
       cancelled = true
@@ -125,7 +145,7 @@ export default function ProjectList() {
 
   const rows = useMemo(() => {
     if (!projectList) return []
-    return projectList.filter((project) => {
+    const filtered = projectList.filter((project) => {
       // search: match against name, description, and status
       const matchesQuery =
         fuzzyMatch(query, project?.name) ||
@@ -146,7 +166,15 @@ export default function ProjectList() {
 
       return true
     })
-  }, [projectList, query, statusFilter, tagFilter, tagsByProject])
+
+    // Sort: projects with thumbnails first, then by name
+    return filtered.sort((a, b) => {
+      const aHasThumb = thumbnailsByProject[a.id] ? 1 : 0
+      const bHasThumb = thumbnailsByProject[b.id] ? 1 : 0
+      if (bHasThumb !== aHasThumb) return bHasThumb - aHasThumb
+      return (a.name || '').localeCompare(b.name || '')
+    })
+  }, [projectList, query, statusFilter, tagFilter, tagsByProject, thumbnailsByProject])
 
   return (
     <div className="w-full h-full flex flex-col gap-2 px-5 pt-16 pb-5 overflow-hidden">
@@ -271,6 +299,7 @@ export default function ProjectList() {
               key={project.id}
               project={project}
               selected={selected}
+              thumbnailUrl={thumbnailsByProject[project.id] || null}
             />
           ))}
       </div>
