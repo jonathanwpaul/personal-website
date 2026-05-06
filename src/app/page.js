@@ -12,6 +12,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 import { useState, useEffect } from 'react'
+import { ProfileSectionSkeleton } from '@/components/Skeletons'
 
 function IconRow({ Icon, name, href, handle }) {
   return (
@@ -85,7 +86,7 @@ export default function ProfileSection() {
   }, [])
 
   const profilePictureClass = 'w-28 h-28 rounded-full'
-  if (!user) return
+  if (!user) return <ProfileSectionSkeleton />
 
   return (
     <div className="max-w-5xl h-full mx-auto px-6 py-8 overflow-y-auto snap-y snap-proximity md:snap-none">

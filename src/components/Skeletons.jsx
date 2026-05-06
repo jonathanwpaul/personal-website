@@ -24,6 +24,44 @@ export function ProjectCardSkeleton({ count = 6 }) {
   ))
 }
 
+export function ProfileSectionSkeleton() {
+  return (
+    <div className="max-w-5xl h-full mx-auto px-6 py-8 overflow-y-auto snap-y snap-proximity md:snap-none">
+      <div className="flex h-full flex-col md:grid md:grid-cols-3 md:gap-12 items-stretch animate-pulse">
+        {/* Profile column */}
+        <section className="min-h-[calc(100vh-30px)] md:min-h-0 md:col-span-1 flex flex-col items-center gap-12 p-6 md:justify-center">
+          <div className="shrink-0 flex flex-col items-center gap-6">
+            <div className="w-28 h-28 rounded-full bg-gray-300/40 dark:bg-gray-600" />
+            <div className="h-8 bg-gray-300/50 dark:bg-gray-600 rounded w-48" />
+            <div className="flex flex-col gap-2">
+              <div className="h-4 bg-gray-300/40 dark:bg-gray-600 rounded w-64" />
+              <div className="h-4 bg-gray-300/40 dark:bg-gray-600 rounded w-56" />
+              <div className="h-4 bg-gray-300/40 dark:bg-gray-600 rounded w-60" />
+              <div className="h-4 bg-gray-300/40 dark:bg-gray-600 rounded w-52" />
+            </div>
+          </div>
+          <div className="flex shadow-lg">
+            <div className="h-10 w-36 rounded-md bg-gray-300/40 dark:bg-gray-600" />
+          </div>
+        </section>
+
+        {/* About column */}
+        <section className="mt-12 md:mt-0 flex flex-col gap-4 md:col-span-2 md:justify-center md:px-8 min-h-[calc(100vh-30px)] md:min-h-0">
+          <div className="h-10 bg-gray-300/50 dark:bg-gray-600 rounded w-32" />
+          <div className="space-y-3">
+            <div className="h-4 bg-gray-300/40 dark:bg-gray-600 rounded w-full" />
+            <div className="h-4 bg-gray-300/40 dark:bg-gray-600 rounded w-full" />
+            <div className="h-4 bg-gray-300/40 dark:bg-gray-600 rounded w-5/6" />
+            <div className="h-4 bg-gray-300/40 dark:bg-gray-600 rounded w-4/6" />
+            <div className="h-4 bg-gray-300/40 dark:bg-gray-600 rounded w-full" />
+            <div className="h-4 bg-gray-300/40 dark:bg-gray-600 rounded w-3/4" />
+          </div>
+        </section>
+      </div>
+    </div>
+  )
+}
+
 export function ProjectPageSkeleton() {
   return (
     <div className="space-y-6 w-full">
