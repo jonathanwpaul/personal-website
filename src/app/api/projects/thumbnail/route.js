@@ -45,7 +45,7 @@ export async function POST(req) {
   // Single ID request (plain text, not JSON array) → return plain URL
   if (projectIds.length === 1 && !body.startsWith('[')) {
     const url = results[0][1]
-    return new Response(url || '', { status: url ? 200 : 204 })
+    return url ? new Response(url) : new Response(null, { status: 404 })
   }
 
   // Batch request → return map
