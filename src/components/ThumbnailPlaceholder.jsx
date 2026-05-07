@@ -1,5 +1,5 @@
 export const ThumbnailPlaceholder = () => (
-  <div className="w-full h-full flex items-center justify-center bg-primary/10 text-primary">
+  <div className="w-full h-full flex items-center justify-center bg-background text-muted-foreground">
     <svg
       className="w-11 h-11"
       aria-hidden="true"
