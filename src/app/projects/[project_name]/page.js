@@ -160,13 +160,13 @@ export default function Details(props) {
     project
 
   return (
-    <div className="h-full w-full flex justify-center overflow-y-auto md:overflow-y-hidden pb-4">
-      <div className="h-full w-full max-w-5xl px-4 py-6 md:py-8">
+    <div className="w-full flex justify-center overflow-y-auto pb-4">
+      <div className="w-full max-w-5xl px-4 py-6 md:py-8">
         {loading && <ProjectPageSkeleton />}
         {!loading && (
-          <div className="h-full flex flex-col gap-8 md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,3fr)]">
+          <div className="flex flex-col gap-8 md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,3fr)] md:gap-0">
             {/* Left column: thumbnail, title, description, links */}
-            <section className="flex flex-col gap-4 md:pr-4">
+            <section className="flex flex-col gap-4 md:pr-4 md:overflow-y-auto">
               <div className="w-full rounded-lg border bg-card flex items-center justify-center overflow-hidden">
                 {thumbnailUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
