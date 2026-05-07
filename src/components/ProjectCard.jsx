@@ -4,7 +4,11 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { ThumbnailPlaceholder } from './ThumbnailPlaceholder'
 
-export const ProjectCard = ({ project, selected, thumbnailUrl: propThumbnailUrl }) => {
+export const ProjectCard = ({
+  project,
+  selected,
+  thumbnailUrl: propThumbnailUrl,
+}) => {
   const [thumbnailUrl, setThumbnailUrl] = useState(propThumbnailUrl || null)
   const [imgLoaded, setImgLoaded] = useState(false)
   const [projectTags, setProjectTags] = useState([])
@@ -73,51 +77,59 @@ export const ProjectCard = ({ project, selected, thumbnailUrl: propThumbnailUrl 
     >
       <div className="hidden md:block w-full pb-[160%]" aria-hidden="true" />
 
-       <div className="shrink-0 w-20 h-20 rounded-md overflow-hidden relative bg-card
-                       md:absolute md:inset-0 md:w-full md:h-full md:rounded-none">
-         {thumbnailUrl ? (
-           <>
-             {!imgLoaded && (
-               <div className="absolute inset-0 z-10">
-                 <ThumbnailPlaceholder />
-               </div>
-             )}
-             {/* eslint-disable-next-line @next/next/no-img-element */}
-             <img
-               src={thumbnailUrl}
-               alt={`${project.name} thumbnail`}
-               className={`w-full h-full object-cover transition-opacity duration-300 ${
-                 imgLoaded ? 'opacity-100' : 'opacity-0'
-               }`}
-               onLoad={() => setImgLoaded(true)}
-               onError={() => setImgLoaded(false)}
-             />
-           </>
-         ) : (
-           <ThumbnailPlaceholder />
-         )}
-       </div>
+      <div
+        className="shrink-0 w-20 h-20 rounded-md overflow-hidden relative bg-card
+                       md:absolute md:inset-0 md:w-full md:h-full md:rounded-none"
+      >
+        {thumbnailUrl ? (
+          <>
+            {!imgLoaded && (
+              <div className="absolute inset-0 z-10">
+                <ThumbnailPlaceholder />
+              </div>
+            )}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={thumbnailUrl}
+              alt={`${project.name} thumbnail`}
+              className={`w-full h-full object-cover transition-opacity duration-300 ${
+                imgLoaded ? 'opacity-100' : 'opacity-0'
+              }`}
+              onLoad={() => setImgLoaded(true)}
+              onError={() => setImgLoaded(false)}
+            />
+          </>
+        ) : (
+          <ThumbnailPlaceholder />
+        )}
+      </div>
 
       <div className="flex flex-col flex-1 gap-1 md:hidden">
         <span className="text-sm font-semibold">{project.name}</span>
         <span className="text-xs opacity-90">{project.description}</span>
       </div>
 
-      <div className="hidden md:flex flex-col justify-end gap-1.5 p-3
+      <div
+        className="hidden md:flex flex-col justify-end gap-1.5 p-3
                       absolute bottom-0 left-0 right-0 overflow-hidden
                       max-h-[33%] group-hover:max-h-[500px]
                       transition-[max-height] duration-300 ease-in-out
-                      backdrop-blur-md bg-black/30">
+                      backdrop-blur-md bg-black/30"
+      >
         <span className="text-sm font-semibold text-white leading-tight truncate shrink-0">
           {project.name}
         </span>
         <div className="h-0 overflow-hidden group-hover:h-auto flex flex-col gap-1.5 shrink-0">
-          <p className="text-xs text-white/90 leading-relaxed line-clamp-[8]
-                        opacity-0 group-hover:opacity-100 transition-opacity duration-200 delay-150">
+          <p
+            className="text-xs text-white/90 leading-relaxed line-clamp-[8]
+                        opacity-0 group-hover:opacity-100 transition-opacity duration-200 delay-150"
+          >
             {project.description}
           </p>
-          <span className="text-[0.65rem] text-white/60 capitalize
-                           opacity-0 group-hover:opacity-100 transition-opacity duration-200 delay-150">
+          <span
+            className="text-[0.65rem] text-white/60 capitalize
+                           opacity-0 group-hover:opacity-100 transition-opacity duration-200 delay-150"
+          >
             {project.status}
           </span>
         </div>

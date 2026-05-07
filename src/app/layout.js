@@ -16,7 +16,9 @@ export default function RootLayout({ children }) {
         className={`${font.className} flex flex-col h-screen bg-background text-foreground`}
       >
         <TopBar />
-        <main className="flex flex-1 min-h-0 h-[95%]">{children}</main>
+        <main className="flex flex-1 min-h-0 h-[95%] overflow-y-auto">
+          {children}
+        </main>
       </body>
     </html>
   )

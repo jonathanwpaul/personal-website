@@ -174,11 +174,18 @@ export default function ProjectList() {
       if (bHasThumb !== aHasThumb) return bHasThumb - aHasThumb
       return (a.name || '').localeCompare(b.name || '')
     })
-  }, [projectList, query, statusFilter, tagFilter, tagsByProject, thumbnailsByProject])
+  }, [
+    projectList,
+    query,
+    statusFilter,
+    tagFilter,
+    tagsByProject,
+    thumbnailsByProject,
+  ])
 
   return (
-    <div className="w-full h-full flex flex-col gap-2 px-5 pt-16 pb-5 overflow-hidden">
-      <div className="grid grid-cols-1 lg:grid-cols-2 items-center justify-between gap-4 mb-8">
+    <div className="w-full h-full flex flex-col pb-10 overflow-y-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 items-center justify-between p-5 gap-4 sticky top-0 z-100 bg-background/20 backdrop-blur-[256px]">
         <div>
           <h1 className="font-bold text-lg text-primary">Projects</h1>
           <h2 className="font-light text-xs">
@@ -261,36 +268,35 @@ export default function ProjectList() {
             </svg>
           </button>
         </div>
-      </div>
-
-      {/* Filter bar - status (single select) and tags (multi select) */}
-      {!loading && filterPanelOpen && (
-        <div className="transition-all duration-300 ease-in-out">
-          <div className="flex flex-row flex-wrap gap-4 items-start justify-start pb-4">
-            <div className="">
-              <FilterChips
-                label="Status"
-                options={statusOptions}
-                multiple={false}
-                selectedValues={statusFilter ? [statusFilter] : []}
-                onChange={(values) => setStatusFilter(values[0] ?? null)}
-              />
-            </div>
-            <div className="">
-              <FilterChips
-                label="Tags"
-                options={tagOptions}
-                multiple
-                selectedValues={tagFilter}
-                onChange={setTagFilter}
-              />
+        {/* Filter bar - status (single select) and tags (multi select) */}
+        {!loading && filterPanelOpen && (
+          <div className="transition-all duration-300 ease-in-out">
+            <div className="flex flex-row flex-wrap gap-4 items-start justify-start pb-4">
+              <div className="">
+                <FilterChips
+                  label="Status"
+                  options={statusOptions}
+                  multiple={false}
+                  selectedValues={statusFilter ? [statusFilter] : []}
+                  onChange={(values) => setStatusFilter(values[0] ?? null)}
+                />
+              </div>
+              <div className="">
+                <FilterChips
+                  label="Tags"
+                  options={tagOptions}
+                  multiple
+                  selectedValues={tagFilter}
+                  onChange={setTagFilter}
+                />
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       <div
-        className={`flex-1 min-h-0 overflow-y-auto grid content-start grid-cols-1 md:grid-cols-4 lg:grid-cols-${CARDS_PER_ROW} gap-2 md:gap-0.5 background/80`}
+        className={`flex-1 min-h-0 grid content-start grid-cols-1 md:grid-cols-4 lg:grid-cols-${CARDS_PER_ROW} p-5 gap-2 md:gap-0.5 background/80`}
       >
         {loading && <ProjectCardSkeleton count={CARDS_PER_ROW * 2} />}
         {!loading &&
