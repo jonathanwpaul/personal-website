@@ -261,11 +261,12 @@ body {
 
 body {
   letter-spacing: var(--tracking-normal);
-  overflow: hidden; /* prevent page/body scroll; inner regions manage their own scroll */
 }
 
 /* Global box sizing for predictable layout */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 

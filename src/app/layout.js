@@ -13,12 +13,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${font.className} flex flex-col h-screen bg-background text-foreground`}
+        className={`${font.className} h-screen flex-col bg-background text-foreground overflow-y-auto`}
       >
         <TopBar />
-        <main className="flex flex-1 min-h-0 h-[95%] overflow-y-auto">
-          {children}
-        </main>
+        <main className="flex">{children}</main>
       </body>
     </html>
   )
