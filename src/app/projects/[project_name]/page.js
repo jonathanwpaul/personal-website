@@ -156,8 +156,15 @@ export default function Details(props) {
 
   if (!project) return
 
-  const { name, description, bom, web_link, project_files, project_videos } =
-    project
+  const {
+    name,
+    pretty_name,
+    description,
+    bom,
+    web_link,
+    project_files,
+    project_videos,
+  } = project
 
   return (
     <div className="w-full flex justify-center overflow-y-auto pb-4">
@@ -185,8 +192,8 @@ export default function Details(props) {
 
               {/* Right: name, description, files, links stacked */}
               <div className="flex flex-col gap-4">
-                <h1 className="text-primary text-2xl font-bold text-left">
-                  {name}
+                <h1 className="text-secondary text-2xl font-bold text-left">
+                  {pretty_name}
                 </h1>
                 {description && (
                   <p className="text-sm leading-relaxed text-foreground/90">
@@ -419,9 +426,7 @@ export default function Details(props) {
 
               {bom && (
                 <section>
-                  <h2 className="text-2xl font-bold mb-4">
-                    Bill of Materials
-                  </h2>
+                  <h2 className="text-2xl font-bold mb-4">Bill of Materials</h2>
                   <ul className="list-disc list-inside mb-4">
                     {bom.map((item, index) => (
                       <li key={index}>{item}</li>

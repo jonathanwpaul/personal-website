@@ -129,7 +129,7 @@ export const ProjectCard = ({
              `}
           >
             <span className="text-sm font-semibold text-white leading-tight truncate shrink-0">
-              {project.name}
+              {project.pretty_name}
             </span>
             <div
               className={`overflow-hidden ${thumbnailUrl ? 'h-0 group-hover:h-auto' : 'h-auto'} flex flex-col gap-1.5 shrink-0`}
