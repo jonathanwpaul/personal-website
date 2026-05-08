@@ -73,7 +73,7 @@ export const ProjectCard = ({
     <Link
       href={`/projects/${project.name}`}
       className={`group relative
-        flex flex-row items-center gap-3 p-3 min-h-[110px]
+        flex flex-row items-center gap-3 p-3 min-h-27.5
         md:block md:p-0 ${hasThumbnail ? 'md:h-80' : 'md:h-[50%]'}
         overflow-hidden rounded-lg md:rounded-none border transition-colors duration-100 bg-card
         ${selected ? 'border-primary' : 'border-border hover:border-primary'}`}
@@ -81,7 +81,7 @@ export const ProjectCard = ({
       {
         <>
           <div
-            className={`${thumbnailUrl ? '' : 'md: hidden'} shrink-0 w-20 h-20 rounded-md overflow-hidden relative bg-card md:absolute md:inset-0 md:w-full md:h-full md:rounded-none`}
+            className={`${hasThumbnail ? '' : 'md:hidden'} shrink-0 w-20 h-20 rounded-md overflow-hidden relative bg-card md:absolute md:inset-0 md:w-full md:h-full md:rounded-none`}
           >
             {thumbnailUrl ? (
               <>
@@ -118,7 +118,7 @@ export const ProjectCard = ({
           <div
             className={`hidden md:flex flex-col gap-1.5 p-3
              ${
-               thumbnailUrl
+               hasThumbnail
                  ? `justify-end absolute bottom-0 left-0 right-0
                     max-h-[33%] group-hover:max-h-125
                     transition-[max-height] duration-300 ease-in-out
@@ -132,10 +132,10 @@ export const ProjectCard = ({
               {project.pretty_name}
             </span>
             <div
-              className={`overflow-hidden ${thumbnailUrl ? 'h-0 group-hover:h-auto' : 'h-auto'} flex flex-col gap-1.5 shrink-0`}
+              className={`overflow-hidden ${hasThumbnail ? 'h-0 group-hover:h-auto' : 'h-auto'} flex flex-col gap-1.5 shrink-0`}
             >
               <p
-                className={`text-xs text-white/90 leading-relaxed line-clamp-8 ${thumbnailUrl ? 'opacity-0 group-hover:opacity-100 transition-opacity duration-100 delay-50' : ''}`}
+                className={`text-xs text-white/90 leading-relaxed line-clamp-8 ${hasThumbnail ? 'opacity-0 group-hover:opacity-100 transition-opacity duration-100 delay-50' : ''}`}
               >
                 {project.description}
               </p>
