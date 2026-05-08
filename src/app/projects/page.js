@@ -36,6 +36,7 @@ export default function ProjectList() {
   const [tagFilter, setTagFilter] = useState([])
   const [tagsByProject, setTagsByProject] = useState({})
   const [thumbnailsByProject, setThumbnailsByProject] = useState({})
+  const [thumbnailsLoaded, setThumbnailsLoaded] = useState(false)
   const [filterPanelOpen, setFilterPanelOpen] = useState(false)
 
   const getProjects = async () => {
@@ -83,6 +84,7 @@ export default function ProjectList() {
     if (!projectList || projectList.length === 0) {
       setTagsByProject({})
       setThumbnailsByProject({})
+      setThumbnailsLoaded(false)
       return
     }
 
@@ -128,10 +130,14 @@ export default function ProjectList() {
             setThumbnailsByProject(thumbnailsByProject)
           }
         }
+        if (!cancelled) {
+          setThumbnailsLoaded(true)
+        }
       } catch (e) {
         if (!cancelled) {
           setTagsByProject({})
           setThumbnailsByProject({})
+          setThumbnailsLoaded(true)
         }
       }
     }
@@ -167,13 +173,38 @@ export default function ProjectList() {
       return true
     })
 
-    // Sort: projects with thumbnails first, then by name
-    return filtered.sort((a, b) => {
+    // Sort: thumbnails first, then by name
+    const sorted = filtered.sort((a, b) => {
       const aHasThumb = thumbnailsByProject[a.id] ? 1 : 0
       const bHasThumb = thumbnailsByProject[b.id] ? 1 : 0
       if (bHasThumb !== aHasThumb) return bHasThumb - aHasThumb
       return (a.name || '').localeCompare(b.name || '')
     })
+
+    // Group non-thumbnail cards into adjacent pairs
+    const result = []
+    let nonThumbBuffer = []
+
+    for (const project of sorted) {
+      if (thumbnailsByProject[project.id]) {
+        if (nonThumbBuffer.length > 0) {
+          result.push({ type: 'pair', projects: nonThumbBuffer })
+          nonThumbBuffer = []
+        }
+        result.push({ type: 'single', project })
+      } else {
+        nonThumbBuffer.push(project)
+        if (nonThumbBuffer.length === 2) {
+          result.push({ type: 'pair', projects: nonThumbBuffer })
+          nonThumbBuffer = []
+        }
+      }
+    }
+    if (nonThumbBuffer.length > 0) {
+      result.push({ type: 'pair', projects: nonThumbBuffer })
+    }
+
+    return result
   }, [
     projectList,
     query,
@@ -300,14 +331,32 @@ export default function ProjectList() {
       >
         {loading && <ProjectCardSkeleton count={CARDS_PER_ROW * 2} />}
         {!loading &&
-          rows.map((project) => (
-            <ProjectCard
-              key={project.id}
-              project={project}
-              selected={selected}
-              thumbnailUrl={thumbnailsByProject[project.id] || null}
-            />
-          ))}
+          rows.map((item) =>
+            item.type === 'single' ? (
+              <ProjectCard
+                key={item.project.id}
+                project={item.project}
+                selected={selected}
+                thumbnailUrl={thumbnailsByProject[item.project.id] || null}
+                hasThumbnail={true}
+              />
+            ) : (
+              <div
+                key={item.projects.map((p) => p.id).join('-')}
+                className="contents md:flex md:flex-col md:gap-0.5"
+              >
+                {item.projects.map((project) => (
+                  <ProjectCard
+                    key={project.id}
+                    project={project}
+                    selected={selected}
+                    thumbnailUrl={null}
+                    hasThumbnail={false}
+                  />
+                ))}
+              </div>
+            ),
+          )}
       </div>
     </div>
   )
