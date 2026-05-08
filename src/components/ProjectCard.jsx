@@ -75,14 +75,13 @@ export const ProjectCard = ({
       className={`group relative
         flex flex-row items-center gap-3 p-3 min-h-[110px]
         md:block md:p-0 ${hasThumbnail ? 'md:h-80' : 'md:h-[50%]'}
-        overflow-hidden rounded-lg md:rounded-none border transition-colors duration-200 bg-card
+        overflow-hidden rounded-lg md:rounded-none border transition-colors duration-100 bg-card
         ${selected ? 'border-primary' : 'border-border hover:border-primary'}`}
     >
-      {hasThumbnail ? (
+      {
         <>
           <div
-            className="shrink-0 w-20 h-20 rounded-md overflow-hidden relative bg-card
-                           md:absolute md:inset-0 md:w-full md:h-full md:rounded-none"
+            className={`${thumbnailUrl ? '' : 'md: hidden'} shrink-0 w-20 h-20 rounded-md overflow-hidden relative bg-card md:absolute md:inset-0 md:w-full md:h-full md:rounded-none`}
           >
             {thumbnailUrl ? (
               <>
@@ -103,36 +102,44 @@ export const ProjectCard = ({
                 />
               </>
             ) : (
-              <ThumbnailPlaceholder />
+              <div />
             )}
           </div>
+
+          {/* project details for mobile */}
 
           <div className="flex flex-col flex-1 gap-1 md:hidden">
             <span className="text-sm font-semibold">{project.name}</span>
             <span className="text-xs opacity-90">{project.description}</span>
           </div>
 
+          {/* project details for non-mobile */}
+
           <div
-            className="hidden md:flex flex-col justify-end gap-1.5 p-3
-                          absolute bottom-0 left-0 right-0 overflow-hidden
-                          max-h-[33%] group-hover:max-h-[500px]
-                          transition-[max-height] duration-300 ease-in-out
-                          backdrop-blur-md bg-black/30"
+            className={`hidden md:flex flex-col gap-1.5 p-3
+             ${
+               thumbnailUrl
+                 ? `justify-end absolute bottom-0 left-0 right-0
+                    max-h-[33%] group-hover:max-h-125
+                    transition-[max-height] duration-300 ease-in-out
+                    backdrop-blur-md bg-black/60
+                   `
+                 : 'h-full justify-center'
+             } 
+             `}
           >
             <span className="text-sm font-semibold text-white leading-tight truncate shrink-0">
               {project.name}
             </span>
-            <div className="h-0 overflow-hidden group-hover:h-auto flex flex-col gap-1.5 shrink-0">
+            <div
+              className={`overflow-hidden ${thumbnailUrl ? 'h-0 group-hover:h-auto' : 'h-auto'} flex flex-col gap-1.5 shrink-0`}
+            >
               <p
-                className="text-xs text-white/90 leading-relaxed line-clamp-[8]
-                            opacity-0 group-hover:opacity-100 transition-opacity duration-200 delay-150"
+                className={`text-xs text-white/90 leading-relaxed line-clamp-8 ${thumbnailUrl ? 'opacity-0 group-hover:opacity-100 transition-opacity duration-100 delay-50' : ''}`}
               >
                 {project.description}
               </p>
-              <span
-                className="text-[0.65rem] text-white/60 capitalize
-                               opacity-0 group-hover:opacity-100 transition-opacity duration-200 delay-150"
-              >
+              <span className="text-[0.65rem] text-secondary capitalize hidden group-hover:inline transition-opacity duration-100 delay-50">
                 {project.status}
               </span>
             </div>
@@ -150,31 +157,7 @@ export const ProjectCard = ({
             )}
           </div>
         </>
-      ) : (
-        <>
-          <div className="hidden md:flex flex-col items-center justify-center w-full h-full p-4">
-            <span className="text-sm font-semibold text-center leading-tight">
-              {project.name}
-            </span>
-            {projectTags.length > 0 && (
-              <div className="flex flex-wrap gap-1 mt-2 justify-center">
-                {projectTags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="text-[0.5rem] px-1.5 py-0.5 rounded-full border border-border text-muted-foreground"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            )}
-          </div>
-          <div className="flex flex-col flex-1 gap-1 md:hidden">
-            <span className="text-sm font-semibold">{project.name}</span>
-            <span className="text-xs opacity-90">{project.description}</span>
-          </div>
-        </>
-      )}
+      }
     </Link>
   )
 }
